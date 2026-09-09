@@ -1,12 +1,14 @@
 # AI Agent RPG
 
+![CI](https://github.com/qingzhikangluo/AI-Agent-Learning/actions/workflows/ci.yml/badge.svg)
+
 通过游戏化任务、真实代码实践、确定性评测和能力证据，训练 AI Agent 工程能力的平台。
 
 当前阶段目标：
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 0 — Project Bootstrap（TASK-001 / TASK-002 完成）**。
+当前进度：**EPIC 0 — Project Bootstrap（TASK-001 / TASK-002 / TASK-003 完成）**。
 
 ## Repository Structure
 
@@ -48,6 +50,10 @@ TASK-002 已建立 TypeScript / Python 工具链：
 - Pytest（Python Hello World 测试）。
 - ESLint（TS / JS Lint）。
 - Ruff（Python Lint）。
+
+TASK-003 已建立 CI：
+
+- GitHub Actions 在 push 到 main 或 pull request 时自动运行 Lint、Type Check、Test、Build。
 
 运行 Python 测试前先安装开发依赖：
 
