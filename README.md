@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 1 至 EPIC 5 完成；EPIC 6 — Progression Engine 完成（TASK-026 至 TASK-028）**。
+当前进度：**EPIC 1 至 EPIC 6 完成；EPIC 7 — Boss（TASK-029 完成）**。
 
 ## Repository Structure
 

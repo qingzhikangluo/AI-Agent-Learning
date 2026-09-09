@@ -1,0 +1,86 @@
+id: first-agent-boss
+missionId: mission-04
+type: boss
+title: Internal Employee Assistant
+description: >
+  为公司内部员工助手实现一个最小 Tool-Calling Agent。
+  可用工具：get_weather（天气）、calculate_expense（差旅报销）、search_faq（内部 FAQ）。
+  玩家需要自己决定 Agent Loop、工具选择、参数生成与错误处理，不能泄露 Hidden Test。
+objectives:
+  - 能根据员工问题选择正确工具。
+  - 能生成合法工具参数。
+  - 能在工具失败后恢复。
+  - 不需要工具时直接回答。
+tests:
+  - id: boss-public-weather
+    name: 正常天气查询
+    visibility: public
+    input:
+      user: "上海明天天气怎么样？"
+    expectedBehavior:
+      type: tool_called
+      value: get_weather
+  - id: boss-public-expense
+    name: 计算差旅报销
+    visibility: public
+    input:
+      user: "这趟出差一共花了 1200 元，帮我算报销。"
+    expectedBehavior:
+      type: tool_called
+      value: calculate_expense
+  - id: boss-public-faq
+    name: FAQ 查询
+    visibility: public
+    input:
+      user: "年假政策是什么？"
+    expectedBehavior:
+      type: tool_called
+      value: search_faq
+  - id: boss-public-no-tool
+    name: 不需要工具的问题
+    visibility: public
+    input:
+      user: "2 + 2 等于多少？"
+    expectedBehavior:
+      type: tool_not_called
+      value: ""
+  - id: boss-hidden-wrong-tool
+    name: 选错工具
+    visibility: hidden
+    input:
+      user: "上海天气如何？"
+    expectedBehavior:
+      type: tool_not_called
+      value: search_faq
+  - id: boss-hidden-wrong-arguments
+    name: 错误参数
+    visibility: hidden
+    input:
+      user: "帮我查北京的天气"
+    expectedBehavior:
+      type: tool_called
+      value: get_weather
+  - id: boss-hidden-tool-failure
+    name: 工具返回错误
+    visibility: hidden
+    input:
+      user: "查询一个不存在城市 nameless-city 的天气"
+    expectedBehavior:
+      type: error_handled
+      value: ""
+  - id: boss-hidden-multiple-tools
+    name: 多工具连续调用
+    visibility: hidden
+    input:
+      user: "先查北京天气，再把打车费 60 元记入报销。"
+    expectedBehavior:
+      type: tool_sequence
+      value: [get_weather, calculate_expense]
+  - id: boss-hidden-malformed
+    name: 无法理解的输入
+    visibility: hidden
+    input:
+      user: "@#$%"
+    expectedBehavior:
+      type: tool_not_called
+      value: ""

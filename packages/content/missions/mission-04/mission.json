@@ -5,6 +5,7 @@
   "prerequisites": ["mission-03"],
   "skillTargets": ["agent.loop", "agent.error-recovery"],
   "challenges": ["basic-agent-loop", "tool-failure-recovery"],
+  "bossId": "first-agent-boss",
   "learningBlocks": [
     {
       "id": "agent-loop-basics",
