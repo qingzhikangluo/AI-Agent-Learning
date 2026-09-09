@@ -22,3 +22,4 @@ export {
   evaluateErrorHandling,
   type ErrorHandlingSubmission
 } from './error-handling'
+export { aggregateEvaluations, aggregateTestResults } from './aggregate'
