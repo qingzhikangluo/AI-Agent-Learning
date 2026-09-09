@@ -1,0 +1,12 @@
+id: travel-expense-transfer
+missionId: transfer
+type: transfer
+title: Travel Expense Assistant
+description: >
+  这是一个新场景：差旅费用助手。
+  可用工具：calculate_distance（计算距离）、calculate_reimbursement（计算报销）、search_policy（差旅政策）。
+  请独立解决，不要复用 Boss 的实现答案。
+objectives:
+  - 能在新业务场景中选择正确工具。
+  - 能把 Tool Calling 能力迁移到差旅报销任务。
+tests: []
