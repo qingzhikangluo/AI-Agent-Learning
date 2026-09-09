@@ -1,4 +1,5 @@
 export type { Player } from './player'
+export type { BossSubmission } from './submission'
 export type { Challenge } from './challenge'
 export { ChallengeType } from './challenge'
 export type {
