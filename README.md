@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 1 — Domain Model 完成；EPIC 2 — Content Engine（TASK-009 / TASK-010 / TASK-011 / TASK-012 / TASK-013 完成）**。
+当前进度：**EPIC 1 — Domain Model 完成；EPIC 2 — Content Engine 完成；EPIC 3 — Evaluation Engine（TASK-014 完成）**。
 
 ## Repository Structure
 
