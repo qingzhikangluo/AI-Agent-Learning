@@ -1,0 +1,22 @@
+{
+  "id": "mission-04",
+  "title": "Agent Loop",
+  "description": "理解 Agent 的决策循环，并能在工具失败后恢复。",
+  "prerequisites": ["mission-03"],
+  "skillTargets": ["agent.loop", "agent.error-recovery"],
+  "challenges": ["basic-agent-loop", "tool-failure-recovery"],
+  "learningBlocks": [
+    {
+      "id": "agent-loop-basics",
+      "title": "Basic Agent Loop",
+      "type": "concept",
+      "body": "Agent Loop 是：接收用户请求 → 模型判断下一步 → 必要时调用工具 → 把结果交回模型 → 直到能回答用户。循环必须有终止条件，防止无限执行。"
+    },
+    {
+      "id": "agent-error-recovery-basics",
+      "title": "Error Recovery",
+      "type": "concept",
+      "body": "当工具失败或模型输出非法时，Agent 应把错误作为新上下文再次交给模型，让它修正参数、换工具或请求补充信息；不要静默吞掉错误。"
+    }
+  ]
+}

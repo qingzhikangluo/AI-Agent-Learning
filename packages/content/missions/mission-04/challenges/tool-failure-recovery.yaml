@@ -1,0 +1,17 @@
+id: tool-failure-recovery
+missionId: mission-04
+type: code
+title: Recover from Tool Failure
+description: 在工具失败时让 Agent 继续完成用户请求。
+objectives:
+  - 能识别工具失败并重新决策。
+  - 不会无限重试。
+tests:
+  - id: tool-failure-recovery-001
+    name: 失败后修正参数重试
+    visibility: public
+    input:
+      tool_error: "missing required field: city"
+    expectedBehavior:
+      type: contains
+      value: "补充参数"

@@ -1,0 +1,17 @@
+id: basic-agent-loop
+missionId: mission-04
+type: code
+title: Build a Basic Agent Loop
+description: 实现模型与工具之间的最小循环。
+objectives:
+  - 能实现“模型决策 → 工具调用 → 结果回填”的循环。
+  - 能设置最大步数作为终止条件。
+tests:
+  - id: basic-agent-loop-001
+    name: 循环包含工具结果回填
+    visibility: public
+    input:
+      question: "工具调用完成后，下一步应该做什么？"
+    expectedBehavior:
+      type: contains
+      value: "把结果返回给模型"
