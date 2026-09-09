@@ -3,22 +3,22 @@ const missions = [
     id: 'mission-01',
     title: 'AI Agent Mental Model',
     skillTargets: ['agent.mental-model'],
-    status: 'active',
+    status: 'passed',
     description: '建立 Agent 最小心智模型，判断 Agent 与固定流程的边界。',
     challenges: [
       { id: 'workflow-vs-agent', title: 'Workflow vs Agent', type: 'concept', status: 'passed' },
       { id: 'agent-components', title: 'Agent Components', type: 'concept', status: 'passed' },
-      { id: 'agent-when-to-use', title: 'When to Use an Agent', type: 'concept', status: 'locked' }
+      { id: 'agent-when-to-use', title: 'When to Use an Agent', type: 'concept', status: 'passed' }
     ]
   },
   {
     id: 'mission-02',
     title: 'API & JSON',
     skillTargets: ['api.http', 'api.json'],
-    status: 'locked',
+    status: 'active',
     description: '发起 API 请求、解析 JSON、处理错误。',
     challenges: [
-      { id: 'api-request', title: 'Make an API Request', type: 'code', status: 'locked' },
+      { id: 'api-request', title: 'Make an API Request', type: 'code', status: 'active' },
       { id: 'json-parser', title: 'Parse JSON', type: 'code', status: 'locked' },
       { id: 'api-error', title: 'Handle an API Error', type: 'code', status: 'locked' }
     ]
@@ -33,6 +33,17 @@ const missions = [
       { id: 'choose-tool', title: 'Choose the Right Tool', type: 'code', status: 'locked' },
       { id: 'validate-arguments', title: 'Validate Tool Arguments', type: 'code', status: 'locked' },
       { id: 'tool-error', title: 'Recover from Tool Errors', type: 'code', status: 'locked' }
+    ]
+  },
+  {
+    id: 'mission-04',
+    title: 'Agent Loop',
+    skillTargets: ['agent.loop', 'agent.error-recovery'],
+    status: 'locked',
+    description: '理解模型与工具的最小决策循环，并处理失败恢复。',
+    challenges: [
+      { id: 'basic-agent-loop', title: 'Build a Basic Agent Loop', type: 'code', status: 'locked' },
+      { id: 'tool-failure-recovery', title: 'Recover from Tool Failure', type: 'code', status: 'locked' }
     ]
   }
 ]
@@ -52,8 +63,8 @@ const transfer = {
 
 const state = {
   view: 'dashboard',
-  selectedMission: 'mission-01',
-  selectedChallenge: 'workflow-vs-agent',
+  selectedMission: 'mission-02',
+  selectedChallenge: 'api-request',
   evidence: [
     { id: 'ev-1', skill: 'agent.mental-model', task: 'Workflow vs Agent', result: 'pass', attempts: 1, hints: 0 },
     { id: 'ev-2', skill: 'agent.mental-model', task: 'Agent Components', result: 'pass', attempts: 1, hints: 0 }
@@ -90,12 +101,20 @@ function viewDashboard() {
   const evidenceHtml = state.evidence.length
     ? state.evidence.map((ev) => `<li><strong>${ev.task}</strong> · ${ev.skill} · ${ev.result === 'pass' ? 'PASS' : 'FAIL'}</li>`).join('')
     : '<li class="empty">完成第一个 Challenge 后，这里会出现证据。</li>'
+  const completedMissions = missions.filter((m) => m.status === 'passed').length
+  const totalMilestones = missions.length + 2
+  const completionPercent = Math.round((completedMissions / totalMilestones) * 100)
 
   return header(
     'Mission Control',
     '从一个真实构建任务开始，用测试证明你的 AI Agent 能力。',
-    '<button class="btn" data-open-mission="mission-01">进入当前任务</button>'
+    `<button class="btn" data-open-mission="${state.selectedMission}">进入当前任务</button>`
   ) +
+  `<div class="route-progress">
+    <span class="route-progress-label">路线完成度</span>
+    <div class="route-progress-track"><div class="route-progress-fill" style="width:${completionPercent}%"></div></div>
+    <span class="route-progress-value">${completionPercent}% · ${completedMissions}/${totalMilestones} 里程碑</span>
+  </div>` +
   `<section class="section grid-2">
     <div>
       <h2 class="section-title">任务路线</h2>
@@ -259,6 +278,10 @@ function render() {
   document.querySelectorAll('.nav-item').forEach((item) => {
     item.classList.toggle('is-active', item.dataset.view === state.view)
   })
+  const activeMission = missions.find((m) => m.id === state.selectedMission)
+  document.getElementById('rail-status-text').textContent = activeMission
+    ? activeMission.id.toUpperCase()
+    : 'Mission 02'
 }
 
 function showToast(message) {

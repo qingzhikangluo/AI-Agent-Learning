@@ -15,7 +15,7 @@
 
 | 路径 | 页面 | 核心任务 |
 | --- | --- | --- |
-| `/` | Dashboard | 当前任务、技能、Evidence、Boss 状态、推荐下一步 |
+| `/` | Dashboard | 当前任务、路线完成百分比、技能、Evidence、Boss 状态、推荐下一步 |
 | `/assessment` | Assessment | 最小能力诊断 |
 | `/missions` | Mission Map | 任务路线 |
 | `/mission/:id` | Mission | 目标、学习块、挑战列表、进度 |
@@ -78,6 +78,7 @@
 - Dashboard 的 Mission Map 与 Evidence 不强制放卡片；使用分栏或表格。
 - Boss/Transfer 页面强调“场景文字”与“可操作测试/提交区”的分离。
 - Challenge 页面使用“任务说明 + 工作台 + 测试记录”三段结构。
+- Dashboard 顶部显示路线完成百分比；其定义为已通过里程碑数 / 总里程碑数（4 个 Mission + Boss + Transfer），不与技能等级换算成课程完成率混淆。
 
 ## 7. 组件规范
 
@@ -99,7 +100,7 @@
 
 ## 9. 负向约束
 
-- 不显示课程完成百分比。
+- 显示路线完成百分比，但只按里程碑完成率计算，不把技能等级当作课程完成率。
 - 不使用无意义图标行、假数据、装饰徽章。
 - 不为 Hero 增加 eyebrow/kicker/pill。
 - 不把 Hidden Test 写进 UI。
