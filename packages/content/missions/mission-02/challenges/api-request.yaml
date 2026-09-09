@@ -1,0 +1,17 @@
+id: api-request
+missionId: mission-02
+type: code
+title: Make an API Request
+description: 编写最小代码向公开 API 发起请求并读取响应。
+objectives:
+  - 能使用正确方法发起 API 请求。
+  - 能读取响应状态与内容。
+tests:
+  - id: api-request-001
+    name: 请求后读取响应
+    visibility: public
+    input:
+      question: "如何安全地处理一次 API 请求？"
+    expectedBehavior:
+      type: contains
+      value: "检查状态码"

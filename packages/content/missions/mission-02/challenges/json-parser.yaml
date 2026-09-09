@@ -1,0 +1,18 @@
+id: json-parser
+missionId: mission-02
+type: code
+title: Parse JSON
+description: 从 API 响应中提取嵌套 JSON 字段。
+objectives:
+  - 能解析 JSON 字符串。
+  - 能在字段缺失时给出清晰错误。
+tests:
+  - id: json-parser-001
+    name: 提取字段
+    visibility: public
+    input:
+      payload: '{"user": {"name": "Ada"}}'
+      question: "如何读取 name 字段？"
+    expectedBehavior:
+      type: contains
+      value: "user"

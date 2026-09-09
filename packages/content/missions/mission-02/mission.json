@@ -1,0 +1,28 @@
+{
+  "id": "mission-02",
+  "title": "API & JSON",
+  "description": "学会发起 API 请求、解析 JSON 响应，并处理常见 API 错误。",
+  "prerequisites": ["mission-01"],
+  "skillTargets": ["api.http", "api.json"],
+  "challenges": ["api-request", "json-parser", "api-error"],
+  "learningBlocks": [
+    {
+      "id": "api-request-basics",
+      "title": "API 请求的基本结构",
+      "type": "concept",
+      "body": "一次 HTTP 请求由方法（GET/POST）、URL、请求头与可选请求体组成。先确认端点与认证要求，再发起请求。"
+    },
+    {
+      "id": "json-parsing-basics",
+      "title": "解析 JSON 响应",
+      "type": "example",
+      "body": "API 通常返回 JSON。解析时要先检查响应是否成功，再读取字段；不要盲目假定某个字段一定存在。"
+    },
+    {
+      "id": "api-error-handling",
+      "title": "处理 API 错误",
+      "type": "concept",
+      "body": "网络错误、非 2xx 状态码、超时与错误格式都可能出现。错误处理必须给出可读信息，并允许调用方重试或降级。"
+    }
+  ]
+}

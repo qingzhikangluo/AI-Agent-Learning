@@ -1,0 +1,17 @@
+id: api-error
+missionId: mission-02
+type: code
+title: Handle an API Error
+description: 处理非 2xx 响应、超时与格式错误。
+objectives:
+  - 能识别常见 API 失败原因。
+  - 能返回可操作的错误消息。
+tests:
+  - id: api-error-001
+    name: 识别超时
+    visibility: public
+    input:
+      question: "请求长时间没有响应，应该怎么处理？"
+    expectedBehavior:
+      type: contains
+      value: "超时"
