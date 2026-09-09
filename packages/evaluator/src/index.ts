@@ -11,3 +11,8 @@ export {
   type ToolCall,
   type ToolCallSubmission
 } from './tool-call'
+export {
+  UnsupportedBehaviorError as UnsupportedToolSequenceBehaviorError,
+  evaluateToolSequenceTestCase,
+  evaluateToolSequences
+} from './tool-sequence'
