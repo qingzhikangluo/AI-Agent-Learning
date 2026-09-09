@@ -27,6 +27,30 @@ export interface MissionSummary {
   learningBlocks: LearningBlockSummary[]
 }
 
+export interface PublicTestSummary {
+  id: string
+  name: string
+}
+
+export interface BossSummary {
+  id: string
+  title: string
+  description: string
+  status: MissionStatus
+  tools: string[]
+  constraints: string[]
+  publicTests: PublicTestSummary[]
+}
+
+export interface TransferSummary {
+  id: string
+  title: string
+  description: string
+  status: MissionStatus
+  objectives: string[]
+  tools: string[]
+}
+
 export interface EvidenceSummary {
   id: string
   skill: string
@@ -47,6 +71,8 @@ export interface SkillSummary {
 export interface PlayerState {
   currentMissionId: string
   missions: MissionSummary[]
+  boss: BossSummary
+  transfer: TransferSummary
   evidence: EvidenceSummary[]
   skills: SkillSummary[]
 }
@@ -195,6 +221,42 @@ export const playerState: PlayerState = {
       ]
     }
   ],
+  boss: {
+    id: 'first-agent-boss',
+    title: 'Internal Employee Assistant',
+    description:
+      '为公司内部员工助手实现一个最小 Tool-Calling Agent。可用工具：get_weather（天气）、calculate_expense（差旅报销）、search_faq（内部 FAQ）。需要自己决定 Agent Loop、工具选择、参数生成与错误处理。',
+    status: 'locked',
+    tools: ['get_weather', 'calculate_expense', 'search_faq'],
+    constraints: [
+      '不需要工具时直接回答。',
+      '工具参数必须符合 Schema。',
+      '工具失败后要读取错误并恢复。',
+      'Hidden Test 不会显示在页面上。'
+    ],
+    publicTests: [
+      { id: 'boss-public-weather', name: 'Normal Weather' },
+      { id: 'boss-public-expense', name: 'Calculate Expense' },
+      { id: 'boss-public-faq', name: 'FAQ Search' },
+      { id: 'boss-public-no-tool', name: 'No Tool' }
+    ]
+  },
+  transfer: {
+    id: 'travel-expense-transfer',
+    title: 'Travel Expense Assistant',
+    description:
+      '这是一个新场景：差旅费用助手。可用工具：calculate_distance（计算距离）、calculate_reimbursement（计算报销）、search_policy（差旅政策）。请独立解决，不要复用 Boss 的实现答案。',
+    status: 'locked',
+    objectives: [
+      '能在新业务场景中选择正确工具。',
+      '能把 Tool Calling 能力迁移到差旅报销任务。'
+    ],
+    tools: [
+      'calculate_distance',
+      'calculate_reimbursement',
+      'search_policy'
+    ]
+  },
   evidence: [
     {
       id: 'ev-1',

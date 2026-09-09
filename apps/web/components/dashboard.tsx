@@ -45,22 +45,22 @@ export function Dashboard({ state }: { state: PlayerState }) {
                 <StatusDot status={mission.status} />
               </a>
             ))}
-            <div className="track-row">
+            <a className="track-row" href={`/boss/${state.boss.id}`}>
               <span className="track-index">BOSS</span>
               <div className="track-main">
-                <div className="track-title">Internal Employee Assistant</div>
+                <div className="track-title">{state.boss.title}</div>
                 <div className="track-meta">公开测试通过后提交</div>
               </div>
-              <StatusDot status="locked" />
-            </div>
-            <div className="track-row">
+              <StatusDot status={state.boss.status} />
+            </a>
+            <a className="track-row" href={`/transfer/${state.transfer.id}`}>
               <span className="track-index">TRN</span>
               <div className="track-main">
-                <div className="track-title">Travel Expense Assistant</div>
+                <div className="track-title">{state.transfer.title}</div>
                 <div className="track-meta">新场景独立完成</div>
               </div>
-              <StatusDot status="locked" />
-            </div>
+              <StatusDot status={state.transfer.status} />
+            </a>
           </div>
         </div>
 
