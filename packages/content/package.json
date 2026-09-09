@@ -1,0 +1,17 @@
+{
+  "name": "@ai-agent-rpg/content",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ai-agent-rpg/domain": "0.1.0",
+    "js-yaml": "^4.1.0",
+    "zod": "^4.5.4"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9"
+  }
+}

@@ -37,7 +37,16 @@ describe('Challenge', () => {
       type: ChallengeType.CONCEPT,
       title: 'Workflow vs Agent',
       description: 'Identify when an agent is the right tool.',
-      objectives: ['Explain the difference between workflow and agent']
+      objectives: ['Explain the difference between workflow and agent'],
+      tests: [
+        {
+          id: 'test-001',
+          name: 'explains the difference',
+          visibility: 'public',
+          input: {},
+          expectedBehavior: { type: 'contains', value: 'agent' }
+        }
+      ]
     } satisfies Challenge
 
     expect(challenge).toEqual({
@@ -46,7 +55,16 @@ describe('Challenge', () => {
       type: 'concept',
       title: 'Workflow vs Agent',
       description: 'Identify when an agent is the right tool.',
-      objectives: ['Explain the difference between workflow and agent']
+      objectives: ['Explain the difference between workflow and agent'],
+      tests: [
+        {
+          id: 'test-001',
+          name: 'explains the difference',
+          visibility: 'public',
+          input: {},
+          expectedBehavior: { type: 'contains', value: 'agent' }
+        }
+      ]
     })
   })
 })

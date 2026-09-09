@@ -1,0 +1,16 @@
+id: code-challenge
+missionId: mission-alpha
+type: code
+title: Code Challenge
+description: A fixture challenge for loader tests.
+objectives:
+  - Write a small program.
+tests:
+  - id: test-001
+    name: contains expected output
+    visibility: public
+    input:
+      command: python main.py
+    expectedBehavior:
+      type: contains
+      value: "Hello, world!"

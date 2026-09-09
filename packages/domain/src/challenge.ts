@@ -1,3 +1,5 @@
+import type { TestCase } from './evaluation'
+
 export enum ChallengeType {
   CONCEPT = 'concept',
   CODE = 'code',
@@ -13,4 +15,5 @@ export interface Challenge {
   title: string
   description: string
   objectives: string[]
+  tests: TestCase[]
 }

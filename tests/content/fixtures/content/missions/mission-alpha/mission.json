@@ -1,0 +1,8 @@
+{
+  "id": "mission-alpha",
+  "title": "Mission Alpha",
+  "description": "A fixture mission for loader tests.",
+  "prerequisites": [],
+  "skillTargets": ["skill.alpha"],
+  "challenges": ["code-challenge"]
+}
