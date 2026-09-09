@@ -3,6 +3,7 @@ import { resolve } from 'node:path'
 
 import { initWorkspace } from './commands/init'
 import { runWorkspace } from './commands/run'
+import { testWorkspace } from './commands/test'
 
 async function main(): Promise<void> {
   const [, , command] = process.argv
@@ -21,8 +22,16 @@ async function main(): Promise<void> {
     return
   }
 
+  if (command === 'test') {
+    const result = await testWorkspace({ workspaceDir: process.cwd() })
+    process.stdout.write(result.stdout)
+    process.stderr.write(result.stderr)
+    process.exitCode = result.exitCode
+    return
+  }
+
   console.log(
-    'Usage: agent-rpg <command>\n\nCommands:\n  init    Initialize a player workspace\n  run     Run the player agent'
+    'Usage: agent-rpg <command>\n\nCommands:\n  init    Initialize a player workspace\n  run     Run the player agent\n  test    Run player tests'
   )
 }
 

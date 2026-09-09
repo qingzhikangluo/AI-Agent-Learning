@@ -82,3 +82,50 @@ export async function runWorkspaceEntry(
     })
   })
 }
+
+export async function runPytestInWorkspace(
+  workspaceDir: string,
+  timeoutMs = 30_000
+): Promise<ExecutionResult> {
+  const resolvedWorkspace = resolve(workspaceDir)
+  const startedAt = Date.now()
+
+  return new Promise((resolveExecution, reject) => {
+    const child = spawn('python', ['-m', 'pytest', '-q'], {
+      cwd: resolvedWorkspace,
+      windowsHide: true
+    })
+    const stdout: Buffer[] = []
+    const stderr: Buffer[] = []
+    let timedOut = false
+    let settled = false
+
+    child.stdout.on('data', (chunk: Buffer) => stdout.push(chunk))
+    child.stderr.on('data', (chunk: Buffer) => stderr.push(chunk))
+
+    const timer = setTimeout(() => {
+      timedOut = true
+      child.kill()
+    }, timeoutMs)
+
+    child.on('error', (error) => {
+      if (settled) return
+      settled = true
+      clearTimeout(timer)
+      reject(error)
+    })
+
+    child.on('close', (exitCode) => {
+      if (settled) return
+      settled = true
+      clearTimeout(timer)
+      resolveExecution({
+        exitCode: timedOut ? 1 : (exitCode ?? 1),
+        stdout: Buffer.concat(stdout).toString('utf8'),
+        stderr: Buffer.concat(stderr).toString('utf8'),
+        timedOut,
+        durationMs: Date.now() - startedAt
+      })
+    })
+  })
+}
