@@ -1,4 +1,13 @@
+'use client'
+
+import { usePathname } from 'next/navigation'
+
 export function AppShell({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname()
+  const isDashboard = pathname === '/'
+  const isMissions = pathname === '/missions'
+  const isProgress = pathname === '/progress'
+
   return (
     <div className="app-shell">
       <aside className="rail">
@@ -9,15 +18,24 @@ export function AppShell({ children }: { children: React.ReactNode }) {
           <span className="brand-name">AI Agent RPG</span>
         </div>
         <nav className="nav" aria-label="主导航">
-          <a className="nav-item is-active" href="/">
+          <a
+            className={`nav-item${isDashboard ? ' is-active' : ''}`}
+            href="/"
+          >
             Dashboard
           </a>
-          <span className="nav-item is-disabled" aria-disabled="true">
+          <a
+            className={`nav-item${isMissions ? ' is-active' : ''}`}
+            href="/missions"
+          >
             Missions
-          </span>
-          <span className="nav-item is-disabled" aria-disabled="true">
+          </a>
+          <a
+            className={`nav-item${isProgress ? ' is-active' : ''}`}
+            href="/progress"
+          >
             Progress
-          </span>
+          </a>
         </nav>
         <div className="rail-status">
           <span className="status-dot is-active" aria-hidden="true" />
