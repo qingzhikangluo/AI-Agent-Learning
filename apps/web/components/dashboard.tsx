@@ -16,9 +16,9 @@ export function Dashboard({ state }: { state: PlayerState }) {
             从真实构建任务开始，用确定性测试证明你的 AI Agent 能力。
           </p>
         </div>
-        <button className="btn" type="button">
+        <a className="btn" href={`/mission/${state.currentMissionId}`}>
           进入当前任务
-        </button>
+        </a>
       </div>
 
       <div className="route-progress">
@@ -36,14 +36,14 @@ export function Dashboard({ state }: { state: PlayerState }) {
           <h2 className="section-title">任务路线</h2>
           <div className="track">
             {state.missions.map((mission) => (
-              <div className="track-row" key={mission.id}>
+              <a className="track-row" href={`/mission/${mission.id}`} key={mission.id}>
                 <span className="track-index">{mission.id.replace('mission-', 'M')}</span>
                 <div className="track-main">
                   <div className="track-title">{mission.title}</div>
                   <div className="track-meta">{mission.skillTargets.join(' · ')}</div>
                 </div>
                 <StatusDot status={mission.status} />
-              </div>
+              </a>
             ))}
             <div className="track-row">
               <span className="track-index">BOSS</span>

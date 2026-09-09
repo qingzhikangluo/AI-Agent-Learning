@@ -138,6 +138,27 @@ button {
   padding-bottom: 18px;
 }
 
+.crumb {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 14px;
+}
+
+.crumb a {
+  color: var(--accent);
+  text-decoration: none;
+}
+
+.crumb a:hover {
+  text-decoration: underline;
+}
+
+.page-actions {
+  align-items: center;
+  display: flex;
+  min-height: 30px;
+}
+
 .eyebrow {
   color: var(--muted);
   font-size: 12px;
@@ -159,10 +180,29 @@ h2 {
   margin: 0 0 10px;
 }
 
+h3 {
+  font-size: 15px;
+  margin: 0 0 8px;
+}
+
 .page-sub {
   color: var(--muted);
   margin: 8px 0 0;
   max-width: 620px;
+}
+
+.skill-targets {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 14px;
+}
+
+.skill-targets code {
+  background: #f0f1f4;
+  border-radius: 4px;
+  color: var(--muted);
+  padding: 3px 8px;
 }
 
 .route-progress {
@@ -198,6 +238,22 @@ h2 {
   height: 100%;
 }
 
+.mission-progress {
+  margin-top: 26px;
+}
+
+.mission-progress .route-progress-fill {
+  background: var(--accent);
+}
+
+.mission-progress.is-passed .route-progress-fill {
+  background: var(--pass);
+}
+
+.mission-progress.is-locked .route-progress-fill {
+  background: var(--locked);
+}
+
 .section {
   margin-top: 32px;
 }
@@ -218,6 +274,13 @@ h2 {
   display: grid;
   gap: 48px;
   grid-template-columns: 1.15fr 0.85fr;
+}
+
+.mission-grid {
+  align-items: start;
+  display: grid;
+  gap: 48px;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
 }
 
 .btn {
@@ -245,6 +308,10 @@ h2 {
   min-height: 64px;
 }
 
+a.track-row {
+  text-decoration: none;
+}
+
 .track-row:hover {
   background: var(--surface);
 }
@@ -267,6 +334,75 @@ h2 {
 .track-meta {
   color: var(--muted);
   font-size: 13px;
+}
+
+.objective-list {
+  display: grid;
+  gap: 12px;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.objective-list li {
+  align-items: baseline;
+  display: flex;
+  gap: 12px;
+}
+
+.objective-index {
+  color: var(--accent);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  min-width: 22px;
+}
+
+.learning-list {
+  display: grid;
+  gap: 10px;
+}
+
+.learning-block {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  padding: 14px 16px;
+}
+
+.learning-block-head {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+}
+
+.learning-block h3 {
+  font-size: 14px;
+  margin: 0;
+}
+
+.learning-block p {
+  color: var(--muted);
+  font-size: 14px;
+  margin: 8px 0 0;
+}
+
+.tag {
+  background: #f0f1f4;
+  border-radius: 999px;
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 2px 8px;
+  white-space: nowrap;
+}
+
+.mission-note {
+  background: #f0f1f4;
+  border-radius: var(--radius);
+  color: var(--muted);
+  font-size: 13px;
+  margin: 20px 0 0;
+  padding: 10px 12px;
 }
 
 .status {
@@ -383,7 +519,8 @@ code {
   }
 
   .route-progress,
-  .dashboard-grid {
+  .dashboard-grid,
+  .mission-grid {
     grid-template-columns: 1fr;
   }
 

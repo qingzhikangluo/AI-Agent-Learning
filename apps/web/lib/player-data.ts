@@ -1,5 +1,6 @@
 export type MissionStatus = 'passed' | 'active' | 'locked'
 export type ChallengeStatus = 'passed' | 'active' | 'locked'
+export type LearningBlockType = 'concept' | 'example' | 'instruction'
 
 export interface ChallengeSummary {
   id: string
@@ -8,13 +9,22 @@ export interface ChallengeSummary {
   status: ChallengeStatus
 }
 
+export interface LearningBlockSummary {
+  id: string
+  title: string
+  type: LearningBlockType
+  body: string
+}
+
 export interface MissionSummary {
   id: string
   title: string
   description: string
+  objectives: string[]
   skillTargets: string[]
   status: MissionStatus
   challenges: ChallengeSummary[]
+  learningBlocks: LearningBlockSummary[]
 }
 
 export interface EvidenceSummary {
@@ -47,48 +57,141 @@ export const playerState: PlayerState = {
     {
       id: 'mission-01',
       title: 'AI Agent Mental Model',
-      description: '建立 Agent 最小心智模型。',
+      description: '建立对 AI Agent 的最小心智模型：Agent 是什么、由什么组成，以及何时该用它。',
+      objectives: [
+        '能区分固定 Workflow 与 Agent 决策的本质区别。',
+        '能说出最小 Agent 的模型、工具、上下文与循环四个组成部分。',
+        '能根据任务路径是否确定，选择 Agent 或固定流程。'
+      ],
       skillTargets: ['agent.mental-model'],
       status: 'passed',
       challenges: [
         { id: 'workflow-vs-agent', title: 'Workflow vs Agent', type: 'concept', status: 'passed' },
         { id: 'agent-components', title: 'Agent Components', type: 'concept', status: 'passed' },
         { id: 'agent-when-to-use', title: 'When to Use an Agent', type: 'concept', status: 'passed' }
+      ],
+      learningBlocks: [
+        {
+          id: 'mental-model-what-is-an-agent',
+          title: 'Agent 与固定流程的区别',
+          type: 'concept',
+          body: '固定 Workflow 按预设步骤运行；Agent 则由模型根据当前输入自行决定下一步动作，并通过循环观察结果、继续行动，直到完成任务。'
+        },
+        {
+          id: 'mental-model-agent-components',
+          title: 'Agent 的最小组成部分',
+          type: 'concept',
+          body: '一个最小 Agent 包含：模型（决定下一步）、可用工具（执行动作）、上下文（系统提示与历史）、循环（模型-工具-结果-再决策）。'
+        },
+        {
+          id: 'mental-model-when-to-use',
+          title: '何时选择 Agent',
+          type: 'concept',
+          body: '当任务路径不确定、需要根据中间结果选择不同动作、且允许模型推理时，Agent 才有价值；固定且可穷举的流程应优先使用 Workflow。'
+        }
       ]
     },
     {
       id: 'mission-02',
       title: 'API & JSON',
-      description: '发起 API 请求、解析 JSON、处理错误。',
+      description: '学会发起 API 请求、解析 JSON 响应，并处理常见 API 错误。',
+      objectives: [
+        '能使用正确方法发起 API 请求，并读取响应状态与内容。',
+        '能解析 JSON，并在字段缺失时给出清晰、可操作的错误。',
+        '能识别非 2xx 响应、超时与格式错误，并返回可读信息。'
+      ],
       skillTargets: ['api.http', 'api.json'],
       status: 'active',
       challenges: [
         { id: 'api-request', title: 'Make an API Request', type: 'code', status: 'active' },
         { id: 'json-parser', title: 'Parse JSON', type: 'code', status: 'locked' },
         { id: 'api-error', title: 'Handle an API Error', type: 'code', status: 'locked' }
+      ],
+      learningBlocks: [
+        {
+          id: 'api-request-basics',
+          title: 'API 请求的基本结构',
+          type: 'concept',
+          body: '一次 HTTP 请求由方法（GET/POST）、URL、请求头与可选请求体组成。先确认端点与认证要求，再发起请求。'
+        },
+        {
+          id: 'json-parsing-basics',
+          title: '解析 JSON 响应',
+          type: 'example',
+          body: 'API 通常返回 JSON。解析时要先检查响应是否成功，再读取字段；不要盲目假定某个字段一定存在。'
+        },
+        {
+          id: 'api-error-handling',
+          title: '处理 API 错误',
+          type: 'concept',
+          body: '网络错误、非 2xx 状态码、超时与错误格式都可能出现。错误处理必须给出可读信息，并允许调用方重试或降级。'
+        }
       ]
     },
     {
       id: 'mission-03',
       title: 'Tool Calling',
-      description: '选择工具、生成合法参数、处理工具错误。',
-      skillTargets: ['tool.selection', 'tool.arguments'],
+      description: '学会让 Agent 选择正确工具、生成合法参数，并在工具失败时恢复。',
+      objectives: [
+        '能根据用户意图选择最合适的工具，不匹配时不强行调用。',
+        '能生成符合 Schema 的参数，并在缺失或类型错误时拒绝调用。',
+        '能读取工具错误并决定重试、换工具或如实向用户说明。'
+      ],
+      skillTargets: ['tool.schema', 'tool.selection', 'tool.arguments'],
       status: 'locked',
       challenges: [
         { id: 'choose-tool', title: 'Choose the Right Tool', type: 'code', status: 'locked' },
         { id: 'validate-arguments', title: 'Validate Tool Arguments', type: 'code', status: 'locked' },
         { id: 'tool-error', title: 'Recover from Tool Errors', type: 'code', status: 'locked' }
+      ],
+      learningBlocks: [
+        {
+          id: 'tool-selection-basics',
+          title: 'Tool Selection',
+          type: 'concept',
+          body: '给模型的每个工具都要有清晰名称与用途描述。模型根据用户意图在工具清单中选择最合适的一项，不匹配时不应强行调用。'
+        },
+        {
+          id: 'tool-arguments-basics',
+          title: 'Arguments',
+          type: 'concept',
+          body: '每个工具必须定义参数 Schema。模型生成参数后应先校验类型、必填项与取值范围，再真正执行工具。'
+        },
+        {
+          id: 'tool-error-basics',
+          title: 'Tool Error',
+          type: 'concept',
+          body: '工具执行可能失败：参数错误、服务不可用或数据不存在。Agent 必须读取错误、向模型反馈，并选择修复参数、换工具或如实告知用户。'
+        }
       ]
     },
     {
       id: 'mission-04',
       title: 'Agent Loop',
-      description: '理解模型与工具的最小决策循环。',
+      description: '理解 Agent 的决策循环，并能在工具失败后恢复。',
+      objectives: [
+        '能实现“模型决策 → 工具调用 → 结果回填”的最小循环，并设置终止条件。',
+        '能在工具失败后把错误交回模型修正，并避免无限重试。'
+      ],
       skillTargets: ['agent.loop', 'agent.error-recovery'],
       status: 'locked',
       challenges: [
         { id: 'basic-agent-loop', title: 'Build a Basic Agent Loop', type: 'code', status: 'locked' },
         { id: 'tool-failure-recovery', title: 'Recover from Tool Failure', type: 'code', status: 'locked' }
+      ],
+      learningBlocks: [
+        {
+          id: 'agent-loop-basics',
+          title: 'Basic Agent Loop',
+          type: 'concept',
+          body: 'Agent Loop 是：接收用户请求 → 模型判断下一步 → 必要时调用工具 → 把结果交回模型 → 直到能回答用户。循环必须有终止条件，防止无限执行。'
+        },
+        {
+          id: 'agent-error-recovery-basics',
+          title: 'Error Recovery',
+          type: 'concept',
+          body: '当工具失败或模型输出非法时，Agent 应把错误作为新上下文再次交给模型，让它修正参数、换工具或请求补充信息；不要静默吞掉错误。'
+        }
       ]
     }
   ],
@@ -135,5 +238,18 @@ export function routeCompletion(state: PlayerState) {
     completed,
     total: totalMilestones,
     percent: Math.round((completed / totalMilestones) * 100)
+  }
+}
+
+export function missionProgress(mission: MissionSummary) {
+  const total = mission.challenges.length
+  const completed = mission.challenges.filter(
+    (challenge) => challenge.status === 'passed'
+  ).length
+
+  return {
+    completed,
+    total,
+    percent: total === 0 ? 0 : Math.round((completed / total) * 100)
   }
 }
