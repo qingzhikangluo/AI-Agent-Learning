@@ -1,0 +1,16 @@
+id: agent-components
+missionId: mission-01
+type: concept
+title: Agent Components
+description: 列出最小 Agent 的必要组成部分。
+objectives:
+  - 能说出模型、工具、上下文与循环四个组成部分。
+tests:
+  - id: agent-components-001
+    name: 包含核心组件
+    visibility: public
+    input:
+      question: "一个最小 Agent 至少需要哪些部分？"
+    expectedBehavior:
+      type: contains
+      value: "模型"

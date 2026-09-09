@@ -30,6 +30,24 @@ async function collectContentFiles(dirPath: string): Promise<string[]> {
   return files
 }
 
+async function collectMissionFiles(dirPath: string): Promise<string[]> {
+  const entries = await readdir(dirPath, { withFileTypes: true }).catch(
+    () => []
+  )
+  const files: string[] = []
+
+  for (const entry of entries) {
+    const entryPath = join(dirPath, entry.name)
+    if (entry.isDirectory()) {
+      files.push(...(await collectMissionFiles(entryPath)))
+    } else if (['mission.json', 'mission.yaml', 'mission.yml'].includes(entry.name)) {
+      files.push(entryPath)
+    }
+  }
+
+  return files
+}
+
 export async function loadValidatedFile<T>(
   filePath: string,
   schema: z.ZodType<T>
@@ -74,7 +92,14 @@ export async function loadContentFiles<T>(
 export async function loadMissions(
   dirPath: string = missionsContentDir
 ): Promise<Array<z.infer<typeof missionSchema>>> {
-  return loadContentFiles(dirPath, missionSchema)
+  const files = await collectMissionFiles(dirPath)
+  const missions: Array<z.infer<typeof missionSchema>> = []
+
+  for (const file of files) {
+    missions.push(await loadValidatedFile(file, missionSchema))
+  }
+
+  return missions
 }
 
 export async function loadChallenges(

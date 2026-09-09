@@ -1,0 +1,19 @@
+id: workflow-vs-agent
+missionId: mission-01
+type: concept
+title: Workflow vs Agent
+description: 判断一个场景应该使用固定 Workflow 还是 Agent。
+objectives:
+  - 能区分固定流程与 Agent 决策的区别。
+tests:
+  - id: workflow-vs-agent-001
+    name: 识别 Agent 的典型特征
+    visibility: public
+    input:
+      question: "以下哪项最能体现 Agent 而不是固定 Workflow？"
+      options:
+        - 按固定顺序调用 A 再调用 B
+        - 根据用户问题自行决定调用哪个工具
+    expectedBehavior:
+      type: contains
+      value: "根据用户问题自行决定调用哪个工具"

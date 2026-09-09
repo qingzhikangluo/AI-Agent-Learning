@@ -1,0 +1,32 @@
+{
+  "id": "mission-01",
+  "title": "AI Agent Mental Model",
+  "description": "建立对 AI Agent 的最小心智模型：Agent 是什么、由什么组成，以及何时该用它。",
+  "prerequisites": [],
+  "skillTargets": ["agent.mental-model"],
+  "challenges": [
+    "workflow-vs-agent",
+    "agent-components",
+    "agent-when-to-use"
+  ],
+  "learningBlocks": [
+    {
+      "id": "mental-model-what-is-an-agent",
+      "title": "Agent 与固定流程的区别",
+      "type": "concept",
+      "body": "固定 Workflow 按预设步骤运行；Agent 则由模型根据当前输入自行决定下一步动作，并通过循环观察结果、继续行动，直到完成任务。"
+    },
+    {
+      "id": "mental-model-agent-components",
+      "title": "Agent 的最小组成部分",
+      "type": "concept",
+      "body": "一个最小 Agent 包含：模型（决定下一步）、可用工具（执行动作）、上下文（系统提示与历史）、循环（模型-工具-结果-再决策）。"
+    },
+    {
+      "id": "mental-model-when-to-use",
+      "title": "何时选择 Agent",
+      "type": "concept",
+      "body": "当任务路径不确定、需要根据中间结果选择不同动作、且允许模型推理时，Agent 才有价值；固定且可穷举的流程应优先使用 Workflow。"
+    }
+  ]
+}

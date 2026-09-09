@@ -22,6 +22,13 @@ export const testCaseSchema = z.object({
   failureCategory: failureCategorySchema.optional()
 })
 
+export const learningBlockSchema = z.object({
+  id: z.string().min(1),
+  title: z.string().min(1),
+  type: z.enum(['concept', 'example', 'instruction']).optional(),
+  body: z.string().min(1)
+})
+
 export const challengeSchema = z.object({
   id: z.string().min(1),
   missionId: z.string().min(1),
@@ -39,5 +46,6 @@ export const missionSchema = z.object({
   prerequisites: z.array(z.string()),
   skillTargets: z.array(z.string()),
   challenges: z.array(z.string()),
+  learningBlocks: z.array(learningBlockSchema).optional(),
   bossId: z.string().optional()
 })

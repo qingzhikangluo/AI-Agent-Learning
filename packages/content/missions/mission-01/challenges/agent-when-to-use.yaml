@@ -1,0 +1,25 @@
+id: agent-when-to-use
+missionId: mission-01
+type: concept
+title: When to Use an Agent
+description: 判断“何时应该使用 Agent，何时应该使用固定流程”。
+objectives:
+  - 能为不确定路径的任务选择 Agent。
+  - 能为固定路径的任务选择 Workflow。
+tests:
+  - id: agent-when-to-use-001
+    name: 固定任务选 Workflow
+    visibility: public
+    input:
+      scenario: "每次都需要调用同一个 API，并按固定格式保存结果。"
+    expectedBehavior:
+      type: contains
+      value: "固定流程"
+  - id: agent-when-to-use-002
+    name: 不确定任务选 Agent
+    visibility: public
+    input:
+      scenario: "用户问题可能涉及多个不同工具，需要先判断再调用。"
+    expectedBehavior:
+      type: contains
+      value: "Agent"
