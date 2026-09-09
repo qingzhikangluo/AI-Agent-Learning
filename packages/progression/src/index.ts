@@ -11,3 +11,7 @@ export {
   type RetryPolicyInput,
   type RetryPolicyResult
 } from './retry-policy'
+export {
+  hasTransferPassForSkill,
+  skillLevelAfterTransfer
+} from './transfer-pass'
