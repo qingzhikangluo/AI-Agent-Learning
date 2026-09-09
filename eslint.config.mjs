@@ -22,5 +22,13 @@ export default tseslint.config(
         ...globals.node
       }
     }
+  },
+  {
+    files: ['docs/ui-concept/wireframe/**/*.js'],
+    languageOptions: {
+      globals: {
+        ...globals.browser
+      }
+    }
   }
 )

@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 1 至 EPIC 9 完成；EPIC 10 — CLI（TASK-040 至 TASK-044 完成）**。
+当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 — Web UI（视觉方向 v0.1 评审中，未开始页面实现）**。
 
 ## Repository Structure
 

@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>AI Agent RPG — UI Wireframe</title>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="rail" aria-label="主导航">
+        <div class="brand">
+          <span class="brand-mark" aria-hidden="true">AR</span>
+          <span class="brand-name">AI Agent RPG</span>
+        </div>
+        <nav class="nav">
+          <button class="nav-item is-active" data-view="dashboard">Dashboard</button>
+          <button class="nav-item" data-view="missions">Missions</button>
+          <button class="nav-item" data-view="progress">Progress</button>
+        </nav>
+        <div class="rail-status">
+          <span class="status-dot is-active" aria-hidden="true"></span>
+          <span id="rail-status-text">Mission 01</span>
+        </div>
+      </aside>
+      <main id="view" class="view" tabindex="-1"></main>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+    <script src="app.js"></script>
+  </body>
+</html>
