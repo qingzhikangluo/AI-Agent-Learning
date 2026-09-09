@@ -6,3 +6,4 @@ export type {
 } from './runtime'
 export { PythonRuntime } from './python-runtime'
 export { discoverPythonFiles, runWorkspaceEntry } from './test-runner'
+export { mapExecutionFailure } from './error-mapping'
