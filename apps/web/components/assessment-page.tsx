@@ -1,3 +1,7 @@
+'use client'
+
+import { useLanguage } from '@/lib/i18n'
+
 const categories = [
   'Python',
   'API',
@@ -7,26 +11,26 @@ const categories = [
 ]
 
 export function AssessmentPage() {
+  const { t } = useLanguage()
+
   return (
     <>
       <div className="page-head">
         <div>
-          <p className="eyebrow">Assessment</p>
-          <h1>Assessment</h1>
-          <p className="page-sub">
-            完成最小能力诊断，系统会给出推荐起点。
-          </p>
+          <p className="eyebrow">{t('assessmentTitle')}</p>
+          <h1>{t('assessmentTitle')}</h1>
+          <p className="page-sub">{t('assessmentSub')}</p>
         </div>
       </div>
 
       <section className="section">
-        <h2 className="section-title">能力状态</h2>
+        <h2 className="section-title">{t('abilityStatus')}</h2>
         <div className="table">
           <table>
             <thead>
               <tr>
-                <th>能力</th>
-                <th>状态</th>
+                <th>{t('ability')}</th>
+                <th>{t('status')}</th>
               </tr>
             </thead>
             <tbody>
@@ -36,7 +40,7 @@ export function AssessmentPage() {
                   <td>
                     <span className="status">
                       <span className="status-dot" aria-hidden="true" />
-                      待评测
+                      {t('pending')}
                     </span>
                   </td>
                 </tr>

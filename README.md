@@ -48,6 +48,7 @@ npm run dev --workspace @ai-agent-rpg/web
 访问 http://localhost:3000/challenge/api-request 查看当前 Challenge。
 访问 http://localhost:3000/missions 查看 Mission Map。
 访问 http://localhost:3000/progress 查看 Progress。
+界面语言可在侧栏底部切换中文 / English。
 
 TASK-001 阶段使用 Node.js 内置能力作为最小可运行基线：
 

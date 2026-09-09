@@ -8,6 +8,7 @@ import {
 } from '@/lib/challenge-data'
 import type { ChallengeStatus } from '@/lib/player-data'
 
+import { useLanguage } from '@/lib/i18n'
 import { StatusDot } from './status-dot'
 
 const failureChallengeIds = new Set(['choose-tool', 'tool-error'])
@@ -23,6 +24,7 @@ export function ChallengePage({
   status: ChallengeStatus
   locked: boolean
 }) {
+  const { t } = useLanguage()
   const [code, setCode] = useState(challenge.workspace)
   const [runPhase, setRunPhase] = useState<'idle' | 'running' | 'done'>(
     'idle'
@@ -52,13 +54,13 @@ export function ChallengePage({
     runPhase === 'running'
       ? 'Running python main.py …\n'
       : runPhase === 'done'
-        ? 'Running python main.py …\nexit code: 0\nstdout: result received\nstderr: (empty)'
-        : '等待运行…'
+      ? 'Running python main.py …\nexit code: 0\nstdout: result received\nstderr: (empty)'
+        : t('waitingRun')
 
   return (
     <>
       <p className="crumb">
-        <a href="/">Dashboard</a>
+        <a href="/">{t('navDashboard')}</a>
         <span aria-hidden="true"> / </span>
         <a href={`/mission/${challenge.missionId}`}>{missionTitle}</a>
         <span aria-hidden="true"> / </span>
@@ -77,24 +79,26 @@ export function ChallengePage({
             className="btn btn-secondary"
             href={`/mission/${challenge.missionId}`}
           >
-            返回 Mission
+            {t('backToMission')}
           </a>
         </div>
       </div>
 
       <section className="section challenge-grid">
         <div>
-          <h2 className="section-title">Objectives · 目标</h2>
+          <h2 className="section-title">{t('objectives')}</h2>
           <ul className="list">
             {challenge.objectives.map((objective) => (
               <li key={objective}>{objective}</li>
             ))}
           </ul>
 
-          <h2 className="section-title section-spaced">Workspace</h2>
+          <h2 className="section-title section-spaced">
+            {t('workspace')}
+          </h2>
           <textarea
             className="code-editor"
-            aria-label="代码工作区"
+            aria-label={t('workspace')}
             disabled={locked}
             onChange={(event) => setCode(event.target.value)}
             value={code}
@@ -107,7 +111,7 @@ export function ChallengePage({
               disabled={locked || runPhase === 'running'}
               onClick={handleRun}
             >
-              Run
+              {t('run')}
             </button>
             <button
               className="btn secondary"
@@ -119,7 +123,7 @@ export function ChallengePage({
               }
               onClick={handleTest}
             >
-              Run Tests
+              {t('runTests')}
             </button>
             <button
               className="btn ghost"
@@ -127,21 +131,23 @@ export function ChallengePage({
               disabled={locked}
               onClick={() => setHintOpen((current) => !current)}
             >
-              Ask Hint
+              {t('askHint')}
             </button>
           </div>
         </div>
 
         <div>
-          <h2 className="section-title">Output</h2>
+          <h2 className="section-title">{t('output')}</h2>
           <div className="terminal">{output}</div>
 
-          <h2 className="section-title section-spaced">Test Result</h2>
+          <h2 className="section-title section-spaced">
+            {t('testResult')}
+          </h2>
           {testPhase === 'idle' || testPhase === 'running' ? (
             <div className="empty">
               {testPhase === 'running'
-                ? '运行测试…'
-                : '先 Run，再运行 Tests。'}
+                ? t('runningTests')
+                : t('testWaiting')}
             </div>
           ) : (
             <div className="test-ledger">
@@ -175,7 +181,7 @@ export function ChallengePage({
               )}
               {testPhase === 'failed' && (
                 <div className="test-row">
-                  <span>Failure Category</span>
+                  <span>{t('failureCategory')}</span>
                   <span>tool_schema</span>
                 </div>
               )}
@@ -185,10 +191,9 @@ export function ChallengePage({
           {hintOpen && (
             <>
               <div className="hint-box">
-                {hint?.hintText ??
-                  '先读题目、Objective 与公开测试，再检查工具描述和参数。'}
+                {hint?.hintText ?? t('hintFallback')}
                 <span className="hint-guided">
-                  使用 Hint 后，此任务将按 Guided 记录。
+                  {t('hiddenHintGuided')}
                 </span>
               </div>
               {hint && (
@@ -201,7 +206,7 @@ export function ChallengePage({
 
           {locked && (
             <p className="mission-note">
-              此 Challenge 尚未解锁，先完成前置任务后再回来。
+              {t('lockedChallengeNote')}
             </p>
           )}
         </div>

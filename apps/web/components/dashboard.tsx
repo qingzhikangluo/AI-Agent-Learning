@@ -1,39 +1,44 @@
+'use client'
+
 import { routeCompletion } from '@/lib/player-data'
 import type { PlayerState } from '@/lib/player-data'
 
+import { useLanguage } from '@/lib/i18n'
 import { StatusDot } from './status-dot'
 
 export function Dashboard({ state }: { state: PlayerState }) {
+  const { t } = useLanguage()
   const completion = routeCompletion(state)
 
   return (
     <>
       <div className="page-head">
         <div>
-          <p className="eyebrow">Mission Control</p>
-          <h1>当前任务与证据</h1>
-          <p className="page-sub">
-            从真实构建任务开始，用确定性测试证明你的 AI Agent 能力。
-          </p>
+          <p className="eyebrow">{t('missionControl')}</p>
+          <h1>{t('currentTaskAndEvidence')}</h1>
+          <p className="page-sub">{t('dashboardSub')}</p>
         </div>
         <a className="btn" href={`/mission/${state.currentMissionId}`}>
-          进入当前任务
+          {t('enterCurrentMission')}
         </a>
       </div>
 
       <div className="route-progress">
-        <span className="route-progress-label">路线完成度</span>
+        <span className="route-progress-label">
+          {t('routeCompletion')}
+        </span>
         <div className="route-progress-track" role="progressbar" aria-valuenow={completion.percent} aria-valuemin={0} aria-valuemax={100}>
           <div className="route-progress-fill" style={{ width: `${completion.percent}%` }} />
         </div>
         <span className="route-progress-value">
-          {completion.percent}% · {completion.completed}/{completion.total} 里程碑
+          {completion.percent}% · {completion.completed}/{completion.total}{' '}
+          {t('milestones')}
         </span>
       </div>
 
       <section className="section dashboard-grid">
         <div>
-          <h2 className="section-title">任务路线</h2>
+          <h2 className="section-title">{t('missionRoute')}</h2>
           <div className="track">
             {state.missions.map((mission) => (
               <a className="track-row" href={`/mission/${mission.id}`} key={mission.id}>
@@ -46,18 +51,18 @@ export function Dashboard({ state }: { state: PlayerState }) {
               </a>
             ))}
             <a className="track-row" href={`/boss/${state.boss.id}`}>
-              <span className="track-index">BOSS</span>
+              <span className="track-index">{t('bossLabel')}</span>
               <div className="track-main">
                 <div className="track-title">{state.boss.title}</div>
-                <div className="track-meta">公开测试通过后提交</div>
+                <div className="track-meta">{t('bossSubmitMeta')}</div>
               </div>
               <StatusDot status={state.boss.status} />
             </a>
             <a className="track-row" href={`/transfer/${state.transfer.id}`}>
-              <span className="track-index">TRN</span>
+              <span className="track-index">{t('transferLabel')}</span>
               <div className="track-main">
                 <div className="track-title">{state.transfer.title}</div>
-                <div className="track-meta">新场景独立完成</div>
+                <div className="track-meta">{t('transferMeta')}</div>
               </div>
               <StatusDot status={state.transfer.status} />
             </a>
@@ -65,7 +70,7 @@ export function Dashboard({ state }: { state: PlayerState }) {
         </div>
 
         <div>
-          <h2 className="section-title">技能</h2>
+          <h2 className="section-title">{t('skills')}</h2>
           <div className="table">
             <table>
               <thead>
@@ -89,7 +94,9 @@ export function Dashboard({ state }: { state: PlayerState }) {
             </table>
           </div>
 
-          <h2 className="section-title section-spaced">最近 Evidence</h2>
+          <h2 className="section-title section-spaced">
+            {t('recentEvidence')}
+          </h2>
           {state.evidence.length > 0 ? (
             <ul className="list">
               {state.evidence.map((evidence) => (
@@ -101,7 +108,7 @@ export function Dashboard({ state }: { state: PlayerState }) {
             </ul>
           ) : (
             <div className="empty">
-              完成第一个 Challenge 后，这里会出现证据。
+              {t('emptyEvidence')}
             </div>
           )}
         </div>

@@ -1,29 +1,33 @@
+'use client'
+
 import type { PlayerState } from '@/lib/player-data'
 
+import { useLanguage } from '@/lib/i18n'
+
 export function ProgressPage({ state }: { state: PlayerState }) {
+  const { t } = useLanguage()
+
   return (
     <>
       <div className="page-head">
         <div>
-          <p className="eyebrow">Progress</p>
-          <h1>Progress</h1>
-          <p className="page-sub">
-            技能等级由 Evidence 推导，不因单一任务完成而跳级。
-          </p>
+          <p className="eyebrow">{t('progressTitle')}</p>
+          <h1>{t('progressTitle')}</h1>
+          <p className="page-sub">{t('progressSub')}</p>
         </div>
       </div>
 
       <section className="section">
-        <h2 className="section-title">Skills</h2>
+        <h2 className="section-title">{t('skillsTable')}</h2>
         <div className="table">
           <table>
             <thead>
               <tr>
-                <th>Skill</th>
-                <th>Level</th>
-                <th>Confidence</th>
-                <th>Strength</th>
-                <th>Weakness</th>
+                <th>{t('tableSkill')}</th>
+                <th>{t('tableLevel')}</th>
+                <th>{t('tableConfidence')}</th>
+                <th>{t('tableStrength')}</th>
+                <th>{t('tableWeakness')}</th>
               </tr>
             </thead>
             <tbody>
@@ -44,18 +48,18 @@ export function ProgressPage({ state }: { state: PlayerState }) {
       </section>
 
       <section className="section">
-        <h2 className="section-title">Evidence</h2>
+        <h2 className="section-title">{t('evidenceTable')}</h2>
         {state.evidence.length > 0 ? (
           <div className="table">
             <table>
               <thead>
                 <tr>
-                  <th>ID</th>
-                  <th>Skill</th>
-                  <th>Task</th>
-                  <th>Result</th>
-                  <th>Attempts</th>
-                  <th>Hints</th>
+                  <th>{t('tableId')}</th>
+                  <th>{t('tableSkill')}</th>
+                  <th>{t('tableTask')}</th>
+                  <th>{t('tableResult')}</th>
+                  <th>{t('tableAttempts')}</th>
+                  <th>{t('tableHints')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -66,7 +70,11 @@ export function ProgressPage({ state }: { state: PlayerState }) {
                       <code>{evidence.skill}</code>
                     </td>
                     <td>{evidence.task}</td>
-                    <td>{evidence.result}</td>
+                    <td>
+                      {evidence.result === 'pass'
+                        ? t('resultPass')
+                        : t('resultFail')}
+                    </td>
                     <td>{evidence.attempts}</td>
                     <td>{evidence.hints}</td>
                   </tr>
@@ -75,9 +83,7 @@ export function ProgressPage({ state }: { state: PlayerState }) {
             </table>
           </div>
         ) : (
-          <div className="empty">
-            完成第一个 Challenge 后，这里会出现证据。
-          </div>
+          <div className="empty">{t('emptyEvidence')}</div>
         )}
       </section>
     </>

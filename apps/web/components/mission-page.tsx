@@ -1,21 +1,24 @@
+'use client'
+
 import {
   missionProgress,
   type LearningBlockType,
   type MissionSummary
 } from '@/lib/player-data'
 
+import { useLanguage } from '@/lib/i18n'
 import { StatusDot } from './status-dot'
 import { ChallengeHint } from './challenge-hint'
 
-const learningTypeLabels: Record<LearningBlockType, string> = {
-  concept: 'Concept',
-  example: 'Example',
-  instruction: 'Instruction'
-}
-
 export function MissionPage({ mission }: { mission: MissionSummary }) {
+  const { t } = useLanguage()
   const progress = missionProgress(mission)
   const missionIndex = mission.id.replace('mission-', 'M')
+  const learningTypeLabels: Record<LearningBlockType, string> = {
+    concept: t('conceptTag'),
+    example: t('exampleTag'),
+    instruction: t('instructionTag')
+  }
   const activeChallenge =
     mission.status === 'active'
       ? mission.challenges.find((challenge) => challenge.status === 'active')
@@ -32,8 +35,8 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
           <div className="track-title">{challenge.title}</div>
           <div className="track-meta">
             {challenge.type === 'concept'
-              ? 'Concept Challenge'
-              : 'Code Challenge'}
+              ? t('conceptChallenge')
+              : t('codeChallenge')}
           </div>
         </div>
         <StatusDot status={challenge.status} />
@@ -57,7 +60,7 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
   return (
     <>
       <p className="crumb">
-        <a href="/">Dashboard</a>
+        <a href="/">{t('navDashboard')}</a>
         <span aria-hidden="true"> / </span>
         {missionIndex}
       </p>
@@ -67,7 +70,7 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
           <p className="eyebrow">{missionIndex} · Mission</p>
           <h1>{mission.title}</h1>
           <p className="page-sub">{mission.description}</p>
-          <div className="skill-targets" aria-label="技能目标">
+          <div className="skill-targets" aria-label={t('skillTargets')}>
             {mission.skillTargets.map((skill) => (
               <code key={skill}>{skill}</code>
             ))}
@@ -80,7 +83,7 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
               className="btn"
               href={`/challenge/${activeChallenge.id}`}
             >
-              开始当前 Challenge
+              {t('startCurrentChallenge')}
             </a>
           )}
         </div>
@@ -89,14 +92,16 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
       <div
         className={`route-progress mission-progress is-${mission.status}`}
       >
-        <span className="route-progress-label">Mission Progress</span>
+        <span className="route-progress-label">
+          {t('missionProgress')}
+        </span>
         <div
           className="route-progress-track"
           role="progressbar"
           aria-valuenow={progress.percent}
           aria-valuemin={0}
           aria-valuemax={100}
-          aria-label={`Mission 进度 ${progress.percent}%`}
+          aria-label={`${t('missionProgress')} ${progress.percent}%`}
         >
           <div
             className="route-progress-fill"
@@ -110,7 +115,7 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
 
       <section className="section mission-grid">
         <div>
-          <h2 className="section-title">Objectives · 目标</h2>
+          <h2 className="section-title">{t('objectives')}</h2>
           <ol className="objective-list">
             {mission.objectives.map((objective, index) => (
               <li key={objective}>
@@ -123,7 +128,7 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
           </ol>
 
           <h2 className="section-title section-spaced">
-            Learning Blocks · 学习块
+            {t('learningBlocks')}
           </h2>
           <div className="learning-list">
             {mission.learningBlocks.map((block) => (
@@ -141,12 +146,12 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
         </div>
 
         <div>
-          <h2 className="section-title">Challenges · 挑战列表</h2>
+          <h2 className="section-title">{t('challenges')}</h2>
           <div className="track">{challengeRows}</div>
 
           {mission.status === 'locked' && (
             <p className="mission-note">
-              此 Mission 需要先通过前置 Mission，完成后自动解锁。
+              {t('lockedMissionNote')}
             </p>
           )}
         </div>

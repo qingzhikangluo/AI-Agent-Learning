@@ -1,5 +1,8 @@
+'use client'
+
 import type { TransferSummary } from '@/lib/player-data'
 
+import { useLanguage } from '@/lib/i18n'
 import { StatusDot } from './status-dot'
 
 export function TransferPage({
@@ -7,43 +10,45 @@ export function TransferPage({
 }: {
   transfer: TransferSummary
 }) {
+  const { t } = useLanguage()
+
   return (
     <>
       <p className="crumb">
-        <a href="/missions">Missions</a>
+        <a href="/missions">{t('navMissions')}</a>
         <span aria-hidden="true"> / </span>
         TRN
       </p>
 
       <div className="page-head">
         <div>
-          <p className="eyebrow">Transfer · 迁移</p>
+          <p className="eyebrow">{t('transferEyebrow')}</p>
           <h1>{transfer.title}</h1>
           <p className="page-sub">{transfer.description}</p>
         </div>
         <div className="page-actions">
           <StatusDot status={transfer.status} />
           <a className="btn" href="/progress">
-            查看迁移证据
+            {t('viewTransferEvidence')}
           </a>
         </div>
       </div>
 
       <section className="section transfer-grid">
         <div>
-          <h2 className="section-title">Objectives · 迁移目标</h2>
+          <h2 className="section-title">{t('transferObjectives')}</h2>
           <ul className="list">
             {transfer.objectives.map((objective) => (
               <li key={objective}>{objective}</li>
             ))}
           </ul>
           <div className="hint-box">
-            新场景，独立解决；不展示 Boss 实现，也不复用 Boss 的答案。
+            {t('transferIndependentNote')}
           </div>
         </div>
 
         <div>
-          <h2 className="section-title">Available Tools</h2>
+          <h2 className="section-title">{t('availableTools')}</h2>
           <ul className="list">
             {transfer.tools.map((tool) => (
               <li key={tool}>

@@ -6,12 +6,14 @@ import {
   getChallengeDetail,
   getChallengeHint
 } from '@/lib/challenge-data'
+import { useLanguage } from '@/lib/i18n'
 
 export function ChallengeHint({
   challengeId
 }: {
   challengeId: string
 }) {
+  const { t } = useLanguage()
   const [open, setOpen] = useState(false)
   const challenge = getChallengeDetail(challengeId)
   const hint = getChallengeHint(challengeId)
@@ -19,10 +21,10 @@ export function ChallengeHint({
   if (!challenge || !hint) return null
 
   const label = open
-    ? '收起示例'
+    ? t('collapseExample')
     : challenge.type === 'code'
-      ? '提示 · 显示示例代码'
-      : '提示 · 显示示例答案'
+      ? t('hintShowCode')
+      : t('hintShowAnswer')
 
   return (
     <div className="challenge-node-hint">

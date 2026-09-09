@@ -1,8 +1,12 @@
+'use client'
+
 import { routeCompletion, type PlayerState } from '@/lib/player-data'
 
+import { useLanguage } from '@/lib/i18n'
 import { StatusDot } from './status-dot'
 
 export function MissionsPage({ state }: { state: PlayerState }) {
+  const { t } = useLanguage()
   const completion = routeCompletion(state)
 
   return (
@@ -10,15 +14,15 @@ export function MissionsPage({ state }: { state: PlayerState }) {
       <div className="page-head">
         <div>
           <p className="eyebrow">Mission Map</p>
-          <h1>Missions</h1>
-          <p className="page-sub">
-            按路线推进：概念 → 代码 → Boss → Transfer。
-          </p>
+          <h1>{t('missionsTitle')}</h1>
+          <p className="page-sub">{t('missionsSub')}</p>
         </div>
       </div>
 
       <div className="route-progress">
-        <span className="route-progress-label">路线完成度</span>
+        <span className="route-progress-label">
+          {t('routeCompletion')}
+        </span>
         <div
           className="route-progress-track"
           role="progressbar"
@@ -33,12 +37,12 @@ export function MissionsPage({ state }: { state: PlayerState }) {
         </div>
         <span className="route-progress-value">
           {completion.percent}% · {completion.completed}/{completion.total}{' '}
-          里程碑
+          {t('milestones')}
         </span>
       </div>
 
       <section className="section">
-        <h2 className="section-title">Missions</h2>
+        <h2 className="section-title">{t('missionsSection')}</h2>
         <div className="track">
           {state.missions.map((mission) => (
             <a
@@ -58,21 +62,23 @@ export function MissionsPage({ state }: { state: PlayerState }) {
           ))}
         </div>
 
-        <h2 className="section-title section-spaced">Final Milestones</h2>
+        <h2 className="section-title section-spaced">
+          {t('finalMilestones')}
+        </h2>
         <div className="track">
           <a className="track-row" href={`/boss/${state.boss.id}`}>
-            <span className="track-index">BOSS</span>
+            <span className="track-index">{t('bossLabel')}</span>
             <div className="track-main">
               <div className="track-title">{state.boss.title}</div>
-              <div className="track-meta">公开测试通过后提交</div>
+              <div className="track-meta">{t('bossSubmitMeta')}</div>
             </div>
             <StatusDot status={state.boss.status} />
           </a>
           <a className="track-row" href={`/transfer/${state.transfer.id}`}>
-            <span className="track-index">TRN</span>
+            <span className="track-index">{t('transferLabel')}</span>
             <div className="track-main">
               <div className="track-title">{state.transfer.title}</div>
-              <div className="track-meta">新场景独立完成</div>
+              <div className="track-meta">{t('transferMeta')}</div>
             </div>
             <StatusDot status={state.transfer.status} />
           </a>
