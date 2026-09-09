@@ -1,7 +1,5 @@
 # AI Agent RPG
 
-![CI](https://github.com/qingzhikangluo/AI-Agent-Learning/actions/workflows/ci.yml/badge.svg)
-
 通过游戏化任务、真实代码实践、确定性评测和能力证据，训练 AI Agent 工程能力的平台。
 
 当前阶段目标：
