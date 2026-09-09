@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 0 — Project Bootstrap（TASK-001 / TASK-002 / TASK-003 完成）**。
+当前进度：**EPIC 1 — Domain Model（TASK-004 完成，EPIC 0 已完成）**。
 
 ## Repository Structure
 
