@@ -1,0 +1,18 @@
+id: validate-arguments
+missionId: mission-03
+type: code
+title: Validate Tool Arguments
+description: 生成并校验工具调用参数。
+objectives:
+  - 能生成符合 Schema 的参数。
+  - 能在参数缺失或类型错误时拒绝调用。
+tests:
+  - id: validate-arguments-001
+    name: 缺少必填参数
+    visibility: public
+    input:
+      tool: get_weather
+      arguments: {}
+    expectedBehavior:
+      type: contains
+      value: "city"

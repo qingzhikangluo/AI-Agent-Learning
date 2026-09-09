@@ -1,0 +1,28 @@
+{
+  "id": "mission-03",
+  "title": "Tool Calling",
+  "description": "学会让 Agent 选择正确工具、生成合法参数，并在工具失败时恢复。",
+  "prerequisites": ["mission-02"],
+  "skillTargets": ["tool.schema", "tool.selection", "tool.arguments"],
+  "challenges": ["choose-tool", "validate-arguments", "tool-error"],
+  "learningBlocks": [
+    {
+      "id": "tool-selection-basics",
+      "title": "Tool Selection",
+      "type": "concept",
+      "body": "给模型的每个工具都要有清晰名称与用途描述。模型根据用户意图在工具清单中选择最合适的一项，不匹配时不应强行调用。"
+    },
+    {
+      "id": "tool-arguments-basics",
+      "title": "Arguments",
+      "type": "concept",
+      "body": "每个工具必须定义参数 Schema。模型生成参数后应先校验类型、必填项与取值范围，再真正执行工具。"
+    },
+    {
+      "id": "tool-error-basics",
+      "title": "Tool Error",
+      "type": "concept",
+      "body": "工具执行可能失败：参数错误、服务不可用或数据不存在。Agent 必须读取错误、向模型反馈，并选择修复参数、换工具或如实告知用户。"
+    }
+  ]
+}

@@ -1,0 +1,25 @@
+id: choose-tool
+missionId: mission-03
+type: code
+title: Choose the Right Tool
+description: 根据用户请求选择正确的工具。
+objectives:
+  - 能根据意图匹配工具用途。
+  - 无匹配工具时不强行调用。
+tests:
+  - id: choose-tool-001
+    name: 天气问题选天气工具
+    visibility: public
+    input:
+      question: "用户问上海天气，应该调用哪个工具？"
+    expectedBehavior:
+      type: contains
+      value: "get_weather"
+  - id: choose-tool-002
+    name: 未知问题不硬调用
+    visibility: hidden
+    input:
+      question: "用户问一个与任何工具都无关的问题。"
+    expectedBehavior:
+      type: tool_not_called
+      value: ""

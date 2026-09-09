@@ -1,0 +1,17 @@
+id: tool-error
+missionId: mission-03
+type: code
+title: Recover from Tool Errors
+description: 处理工具返回的错误并让 Agent 继续正确行动。
+objectives:
+  - 能识别工具错误原因。
+  - 能决定重试、换工具或向用户说明。
+tests:
+  - id: tool-error-001
+    name: 工具返回错误后反馈给模型
+    visibility: public
+    input:
+      tool_error: "city not found"
+    expectedBehavior:
+      type: error_handled
+      value: ""
