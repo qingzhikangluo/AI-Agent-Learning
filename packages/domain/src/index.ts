@@ -1,2 +1,5 @@
 export type { Player } from './player'
+export type { Challenge } from './challenge'
+export { ChallengeType } from './challenge'
+export type { Mission } from './mission'
 export * from './skill'
