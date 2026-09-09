@@ -4,6 +4,7 @@ import { resolve } from 'node:path'
 import { initWorkspace } from './commands/init'
 import { runWorkspace } from './commands/run'
 import { testWorkspace } from './commands/test'
+import { formatStatus, readStatus } from './commands/status'
 
 async function main(): Promise<void> {
   const [, , command] = process.argv
@@ -30,8 +31,14 @@ async function main(): Promise<void> {
     return
   }
 
+  if (command === 'status') {
+    const status = await readStatus(process.cwd())
+    console.log(formatStatus(status))
+    return
+  }
+
   console.log(
-    'Usage: agent-rpg <command>\n\nCommands:\n  init    Initialize a player workspace\n  run     Run the player agent\n  test    Run player tests'
+    'Usage: agent-rpg <command>\n\nCommands:\n  init    Initialize a player workspace\n  run     Run the player agent\n  test    Run player tests\n  status  Show player status'
   )
 }
 
