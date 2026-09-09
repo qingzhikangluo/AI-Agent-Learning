@@ -23,3 +23,4 @@ export {
   type ErrorHandlingSubmission
 } from './error-handling'
 export { aggregateEvaluations, aggregateTestResults } from './aggregate'
+export { scoreBoss, scoreStructuredAnswers } from './boss-score'
