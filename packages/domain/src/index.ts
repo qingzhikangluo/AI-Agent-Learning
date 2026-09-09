@@ -1,6 +1,13 @@
 export type { Player } from './player'
 export type { Challenge } from './challenge'
 export { ChallengeType } from './challenge'
+export type {
+  Attempt,
+  AttemptStatus,
+  Evidence,
+  EvidenceResult,
+  HintUsage
+} from './evidence'
 export {
   FailureCategory,
   type EvaluationResult,
