@@ -2,7 +2,8 @@ import {
   type Attempt,
   type Evidence,
   FailureCategory,
-  type HintUsage
+  type HintUsage,
+  ChallengeType
 } from '@ai-agent-rpg/domain'
 import { describe, expect, it } from 'vitest'
 
@@ -13,6 +14,7 @@ describe('Evidence', () => {
       playerId: 'player-001',
       skillId: 'tool.calling',
       taskId: 'choose-tool',
+      taskType: ChallengeType.CODE,
       result: 'fail',
       score: 0,
       attempts: 2,

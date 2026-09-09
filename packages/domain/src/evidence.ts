@@ -1,4 +1,5 @@
 import type { FailureCategory } from './evaluation'
+import type { ChallengeType } from './challenge'
 
 export type EvidenceResult = 'pass' | 'fail'
 
@@ -7,6 +8,7 @@ export interface Evidence {
   playerId: string
   skillId: string
   taskId: string
+  taskType: ChallengeType
   result: EvidenceResult
   score?: number
   attempts: number
