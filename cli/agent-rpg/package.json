@@ -5,5 +5,8 @@
   "type": "module",
   "bin": {
     "agent-rpg": "./src/index.ts"
+  },
+  "dependencies": {
+    "@ai-agent-rpg/runtime": "0.1.0"
   }
 }

@@ -13,10 +13,12 @@ describe('agent-rpg init', () => {
       await initWorkspace({ workspaceDir })
 
       const agentPy = await readFile(join(workspaceDir, 'agent.py'), 'utf8')
+      const mainPy = await readFile(join(workspaceDir, 'main.py'), 'utf8')
       const toolsPy = await readFile(join(workspaceDir, 'tools.py'), 'utf8')
       const readme = await readFile(join(workspaceDir, 'README.md'), 'utf8')
 
       expect(agentPy).toContain('def handle')
+      expect(mainPy).toContain('def main')
       expect(toolsPy).toContain('# Define the tools')
       expect(readme).toContain('agent-rpg test')
     } finally {

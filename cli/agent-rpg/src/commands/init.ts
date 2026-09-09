@@ -14,6 +14,12 @@ export async function initWorkspace(options: InitOptions): Promise<string> {
       'def handle(user_message: str) -> str:\n' +
       '    """Handle one user message with an agent loop."""\n' +
       '    return user_message\n',
+    'main.py':
+      'from agent import handle\n\n\n' +
+      'def main() -> None:\n' +
+      '    print(handle("test"))\n\n\n' +
+      'if __name__ == "__main__":\n' +
+      '    main()\n',
     'tools.py':
       '# Define the tools available to the agent here.\n',
     'config.py':
