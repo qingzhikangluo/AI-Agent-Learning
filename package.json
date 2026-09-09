@@ -1,0 +1,19 @@
+{
+  "name": "ai-agent-rpg",
+  "version": "0.1.0",
+  "private": true,
+  "description": "AI Agent RPG - First Agent Vertical Slice (Monorepo Bootstrap)",
+  "workspaces": [
+    "apps/*",
+    "packages/*",
+    "cli/*"
+  ],
+  "scripts": {
+    "build": "node scripts/verify-repo.mjs",
+    "test": "node --test",
+    "check": "npm run build && npm test"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}

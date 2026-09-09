@@ -1,0 +1,49 @@
+# AI Agent RPG
+
+通过游戏化任务、真实代码实践、确定性评测和能力证据，训练 AI Agent 工程能力的平台。
+
+当前阶段目标：
+
+> Build the First Agent Vertical Slice。
+
+当前进度：**EPIC 0 — Project Bootstrap（TASK-001 完成）**。
+
+## Repository Structure
+
+```text
+apps/                Web UI（定向 Web 页面，后续任务建立）
+packages/
+  domain/            Domain Model
+  content/           Content Engine / 数据驱动内容
+  evaluator/         Evaluation Engine
+  progression/       Progression / Evidence / Skill
+  runtime/           Player Runtime
+  shared/            共享类型与工具
+cli/
+  agent-rpg/         agent-rpg CLI
+player-workspace/    玩家本地工作区
+tests/               集成 / 端到端测试
+docs/                架构与开发文档
+scripts/             仓库脚本（构建校验等）
+```
+
+## Commands
+
+```bash
+npm install
+npm run build
+npm run test
+```
+
+TASK-001 阶段使用 Node.js 内置能力作为最小可运行基线：
+
+- `build`：校验 Monorepo 结构完整性。
+- `test`：Node 内置测试运行器。
+- TypeScript / Python / Lint / Type Check 工具链在 TASK-002 建立。
+
+## MVP 边界
+
+MVP 禁止实现 Multi-Agent、RAG、Long-term Memory、Online Code Sandbox、AI Mentor、
+AI Judge、Payment、Social、Leaderboard、Cloud Deployment 等超出 Vertical Slice 的能力。
+
+详见后续 `docs/` 中维护的架构文档与 Task Backlog。
