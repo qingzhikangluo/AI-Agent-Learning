@@ -37,3 +37,18 @@ test('root package.json declares build and test scripts', () => {
   assert.equal(typeof packageJson.scripts?.build, 'string')
   assert.equal(typeof packageJson.scripts?.test, 'string')
 })
+
+test('CI workflow runs lint, typecheck, test, and build', () => {
+  const ciPath = join(root, '.github', 'workflows', 'ci.yml')
+  assert.equal(existsSync(ciPath), true, `missing file: ${ciPath}`)
+
+  const ci = readFileSync(ciPath, 'utf8')
+  for (const command of [
+    'npm run lint',
+    'npm run typecheck',
+    'npm test',
+    'npm run build'
+  ]) {
+    assert.equal(ci.includes(command), true, `CI missing step: ${command}`)
+  }
+})
