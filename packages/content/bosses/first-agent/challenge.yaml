@@ -13,7 +13,7 @@ objectives:
   - 不需要工具时直接回答。
 tests:
   - id: boss-public-weather
-    name: 正常天气查询
+    name: Normal Weather
     visibility: public
     input:
       user: "上海明天天气怎么样？"
@@ -21,7 +21,7 @@ tests:
       type: tool_called
       value: get_weather
   - id: boss-public-expense
-    name: 计算差旅报销
+    name: Calculate Expense
     visibility: public
     input:
       user: "这趟出差一共花了 1200 元，帮我算报销。"
@@ -29,7 +29,7 @@ tests:
       type: tool_called
       value: calculate_expense
   - id: boss-public-faq
-    name: FAQ 查询
+    name: FAQ Search
     visibility: public
     input:
       user: "年假政策是什么？"
@@ -37,7 +37,7 @@ tests:
       type: tool_called
       value: search_faq
   - id: boss-public-no-tool
-    name: 不需要工具的问题
+    name: No Tool
     visibility: public
     input:
       user: "2 + 2 等于多少？"
@@ -45,7 +45,7 @@ tests:
       type: tool_not_called
       value: ""
   - id: boss-hidden-wrong-tool
-    name: 选错工具
+    name: Wrong Tool
     visibility: hidden
     input:
       user: "上海天气如何？"
@@ -53,7 +53,7 @@ tests:
       type: tool_not_called
       value: search_faq
   - id: boss-hidden-wrong-arguments
-    name: 错误参数
+    name: Wrong Arguments
     visibility: hidden
     input:
       user: "帮我查北京的天气"
@@ -61,7 +61,7 @@ tests:
       type: tool_called
       value: get_weather
   - id: boss-hidden-tool-failure
-    name: 工具返回错误
+    name: Tool Failure
     visibility: hidden
     input:
       user: "查询一个不存在城市 nameless-city 的天气"
@@ -69,7 +69,7 @@ tests:
       type: error_handled
       value: ""
   - id: boss-hidden-multiple-tools
-    name: 多工具连续调用
+    name: Multiple Tool
     visibility: hidden
     input:
       user: "先查北京天气，再把打车费 60 元记入报销。"
@@ -77,10 +77,18 @@ tests:
       type: tool_sequence
       value: [get_weather, calculate_expense]
   - id: boss-hidden-malformed
-    name: 无法理解的输入
+    name: Malformed Input
     visibility: hidden
     input:
       user: "@#$%"
+    expectedBehavior:
+      type: tool_not_called
+      value: ""
+  - id: boss-hidden-unknown-request
+    name: Unknown Request
+    visibility: hidden
+    input:
+      user: "请帮我预约一个完全不存在的服务。"
     expectedBehavior:
       type: tool_not_called
       value: ""

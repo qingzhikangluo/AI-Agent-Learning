@@ -18,8 +18,22 @@ describe('first agent boss content', () => {
     expect(boss?.id).toBe('first-agent-boss')
     expect(boss?.type).toBe('boss')
     expect(boss?.tests.filter((test) => test.visibility === 'public')).toHaveLength(4)
-    expect(boss?.tests.filter((test) => test.visibility === 'hidden')).toHaveLength(5)
-    expect(boss?.tests).toHaveLength(9)
+    expect(boss?.tests.filter((test) => test.visibility === 'hidden')).toHaveLength(6)
+    expect(boss?.tests).toHaveLength(10)
+    expect(boss?.tests.map((test) => test.name)).toEqual(
+      expect.arrayContaining([
+        'Normal Weather',
+        'Calculate Expense',
+        'FAQ Search',
+        'No Tool',
+        'Wrong Tool',
+        'Wrong Arguments',
+        'Tool Failure',
+        'Multiple Tool',
+        'Malformed Input',
+        'Unknown Request'
+      ])
+    )
   })
 
   it('links the boss from mission 04', async () => {
