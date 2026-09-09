@@ -5,6 +5,7 @@ import {
 } from '@/lib/player-data'
 
 import { StatusDot } from './status-dot'
+import { ChallengeHint } from './challenge-hint'
 
 const learningTypeLabels: Record<LearningBlockType, string> = {
   concept: 'Concept',
@@ -39,18 +40,17 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
       </>
     )
 
-    return isLocked ? (
-      <div className="track-row" key={challenge.id}>
-        {content}
+    return (
+      <div className="challenge-node" key={challenge.id}>
+        {isLocked ? (
+          <div className="track-row">{content}</div>
+        ) : (
+          <a className="track-row" href={`/challenge/${challenge.id}`}>
+            {content}
+          </a>
+        )}
+        <ChallengeHint challengeId={challenge.id} />
       </div>
-    ) : (
-      <a
-        className="track-row"
-        href={`/challenge/${challenge.id}`}
-        key={challenge.id}
-      >
-        {content}
-      </a>
     )
   })
 

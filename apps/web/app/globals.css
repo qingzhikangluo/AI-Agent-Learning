@@ -396,8 +396,87 @@ h3 {
   padding: 12px 14px;
 }
 
+.hint-guided {
+  display: block;
+  font-size: 13px;
+  margin-top: 6px;
+  opacity: 0.9;
+}
+
+.code-sample {
+  background: #101828;
+  border-radius: 8px;
+  color: #d0d5dd;
+  margin-top: 10px;
+  overflow: auto;
+  padding: 14px;
+}
+
+.code-sample code {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre;
+}
+
 .track {
   display: grid;
+}
+
+.challenge-node {
+  border-bottom: 1px solid var(--line);
+  min-width: 0;
+}
+
+.challenge-node .track-row {
+  border-bottom: 0;
+}
+
+.challenge-node-hint {
+  padding: 0 0 12px 58px;
+}
+
+.hint-toggle {
+  background: none;
+  border: 0;
+  color: var(--accent);
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 2px 0;
+}
+
+.hint-toggle:hover {
+  text-decoration: underline;
+}
+
+.hint-sample {
+  background: var(--surface);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  margin-top: 10px;
+  padding: 12px 14px;
+}
+
+.hint-sample p {
+  color: var(--muted);
+  font-size: 13px;
+  margin: 0 0 8px;
+}
+
+.hint-sample pre {
+  margin: 0;
+  overflow: auto;
+}
+
+.hint-sample code {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.65;
+  white-space: pre;
 }
 
 .track-row {

@@ -2,7 +2,10 @@
 
 import { useState } from 'react'
 
-import type { ChallengeDetail } from '@/lib/challenge-data'
+import {
+  getChallengeHint,
+  type ChallengeDetail
+} from '@/lib/challenge-data'
 import type { ChallengeStatus } from '@/lib/player-data'
 
 import { StatusDot } from './status-dot'
@@ -28,6 +31,7 @@ export function ChallengePage({
     'idle' | 'running' | 'passed' | 'failed'
   >('idle')
   const [hintOpen, setHintOpen] = useState(false)
+  const hint = getChallengeHint(challenge.id)
 
   function handleRun() {
     if (locked || runPhase === 'running') return
@@ -179,10 +183,20 @@ export function ChallengePage({
           )}
 
           {hintOpen && (
-            <div className="hint-box">
-              Level 1 · 先读题目、Objective 与公开测试，再检查工具描述和参数。
-              使用 Hint 后，此任务将按 Guided 记录。
-            </div>
+            <>
+              <div className="hint-box">
+                {hint?.hintText ??
+                  '先读题目、Objective 与公开测试，再检查工具描述和参数。'}
+                <span className="hint-guided">
+                  使用 Hint 后，此任务将按 Guided 记录。
+                </span>
+              </div>
+              {hint && (
+                <pre className="code-sample">
+                  <code>{hint.exampleCode}</code>
+                </pre>
+              )}
+            </>
           )}
 
           {locked && (
