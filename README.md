@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 — Web UI（视觉方向 v0.1 评审中，未开始页面实现）**。
+当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 — Web UI（视觉方向已确认，TASK-045 Dashboard 实现完成）**。
 
 ## Repository Structure
 
@@ -36,6 +36,14 @@ npm run typecheck
 npm test
 npm run build
 ```
+
+运行 Web UI：
+
+```bash
+npm run dev --workspace @ai-agent-rpg/web
+```
+
+访问 http://localhost:3000 查看 Dashboard。
 
 TASK-001 阶段使用 Node.js 内置能力作为最小可运行基线：
 

@@ -10,7 +10,7 @@
     "cli/*"
   ],
   "scripts": {
-    "build": "node scripts/verify-repo.mjs",
+    "build": "node scripts/verify-repo.mjs && node scripts/build-web.mjs",
     "check": "npm run lint && npm run typecheck && npm test && npm run build",
     "lint": "npm run lint:js && npm run lint:py",
     "lint:js": "eslint .",
