@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 1 至 EPIC 7 完成；EPIC 8 — Remediation（TASK-034 完成）**。
+当前进度：**EPIC 1 至 EPIC 7 完成；EPIC 8 — Remediation（TASK-034 / TASK-035 完成）**。
 
 ## Repository Structure
 

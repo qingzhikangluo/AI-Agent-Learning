@@ -4,3 +4,4 @@ export {
   failureRecommendation,
   failureRecommendations
 } from './failure-recommendation'
+export { remediationQuestForFailure } from './remediation-quest'

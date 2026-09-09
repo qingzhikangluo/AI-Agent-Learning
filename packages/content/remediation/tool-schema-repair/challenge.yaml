@@ -1,0 +1,31 @@
+id: tool-schema-repair
+missionId: remediation
+type: code
+title: Tool Schema Repair
+description: >
+  修复 get_weather 的工具调用：参数必须符合 Schema，
+  不能把用户整句话塞进 city，也不能遗漏必填字段。
+objectives:
+  - 能从用户输入中提取正确的参数。
+  - 能在参数缺失时拒绝调用而不是构造错误参数。
+tests:
+  - id: tool-schema-repair-001
+    name: 提取城市参数
+    visibility: public
+    input:
+      tool: get_weather
+      schema:
+        required: [city]
+      user: "帮我查上海的天气"
+    expectedBehavior:
+      type: contains
+      value: "city=上海"
+  - id: tool-schema-repair-002
+    name: 缺失参数不硬调用
+    visibility: hidden
+    input:
+      tool: get_weather
+      user: "今天天气怎么样？"
+    expectedBehavior:
+      type: tool_not_called
+      value: get_weather
