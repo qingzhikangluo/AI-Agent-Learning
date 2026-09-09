@@ -1,0 +1,12 @@
+[tool.pytest.ini_options]
+addopts = "-q"
+pythonpath = ["."]
+testpaths = ["tests/python"]
+
+[tool.ruff]
+extend-exclude = [".venv", "node_modules"]
+line-length = 88
+target-version = "py310"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM"]

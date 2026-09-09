@@ -1,11 +1,17 @@
 # dependencies
 node_modules/
+.venv/
 
 # build output
 dist/
 build/
 coverage/
 *.tsbuildinfo
+
+# python
+__pycache__/
+.pytest_cache/
+.ruff_cache/
 
 # logs
 *.log

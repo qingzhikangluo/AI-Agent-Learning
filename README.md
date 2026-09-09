@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 0 — Project Bootstrap（TASK-001 完成）**。
+当前进度：**EPIC 0 — Project Bootstrap（TASK-001 / TASK-002 完成）**。
 
 ## Repository Structure
 
@@ -31,15 +31,29 @@ scripts/             仓库脚本（构建校验等）
 
 ```bash
 npm install
+npm run lint
+npm run typecheck
+npm test
 npm run build
-npm run test
 ```
 
 TASK-001 阶段使用 Node.js 内置能力作为最小可运行基线：
 
 - `build`：校验 Monorepo 结构完整性。
-- `test`：Node 内置测试运行器。
-- TypeScript / Python / Lint / Type Check 工具链在 TASK-002 建立。
+
+TASK-002 已建立 TypeScript / Python 工具链：
+
+- TypeScript 严格模式 + `tsc` Type Check。
+- Vitest（TypeScript Hello World 测试）。
+- Pytest（Python Hello World 测试）。
+- ESLint（TS / JS Lint）。
+- Ruff（Python Lint）。
+
+运行 Python 测试前先安装开发依赖：
+
+```bash
+python -m pip install -r requirements-dev.txt
+```
 
 ## MVP 边界
 
