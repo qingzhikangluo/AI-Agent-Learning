@@ -15,6 +15,44 @@ const learningTypeLabels: Record<LearningBlockType, string> = {
 export function MissionPage({ mission }: { mission: MissionSummary }) {
   const progress = missionProgress(mission)
   const missionIndex = mission.id.replace('mission-', 'M')
+  const activeChallenge =
+    mission.status === 'active'
+      ? mission.challenges.find((challenge) => challenge.status === 'active')
+      : undefined
+  const challengeRows = mission.challenges.map((challenge) => {
+    const isLocked =
+      mission.status === 'locked' || challenge.status === 'locked'
+    const content = (
+      <>
+        <span className="track-index">
+          {challenge.type === 'concept' ? 'C' : 'CODE'}
+        </span>
+        <div className="track-main">
+          <div className="track-title">{challenge.title}</div>
+          <div className="track-meta">
+            {challenge.type === 'concept'
+              ? 'Concept Challenge'
+              : 'Code Challenge'}
+          </div>
+        </div>
+        <StatusDot status={challenge.status} />
+      </>
+    )
+
+    return isLocked ? (
+      <div className="track-row" key={challenge.id}>
+        {content}
+      </div>
+    ) : (
+      <a
+        className="track-row"
+        href={`/challenge/${challenge.id}`}
+        key={challenge.id}
+      >
+        {content}
+      </a>
+    )
+  })
 
   return (
     <>
@@ -37,6 +75,14 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
         </div>
         <div className="page-actions">
           <StatusDot status={mission.status} />
+          {activeChallenge && (
+            <a
+              className="btn"
+              href={`/challenge/${activeChallenge.id}`}
+            >
+              开始当前 Challenge
+            </a>
+          )}
         </div>
       </div>
 
@@ -96,24 +142,7 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
 
         <div>
           <h2 className="section-title">Challenges · 挑战列表</h2>
-          <div className="track">
-            {mission.challenges.map((challenge) => (
-              <div className="track-row" key={challenge.id}>
-                <span className="track-index">
-                  {challenge.type === 'concept' ? 'C' : 'CODE'}
-                </span>
-                <div className="track-main">
-                  <div className="track-title">{challenge.title}</div>
-                  <div className="track-meta">
-                    {challenge.type === 'concept'
-                      ? 'Concept Challenge'
-                      : 'Code Challenge'}
-                  </div>
-                </div>
-                <StatusDot status={challenge.status} />
-              </div>
-            ))}
-          </div>
+          <div className="track">{challengeRows}</div>
 
           {mission.status === 'locked' && (
             <p className="mission-note">

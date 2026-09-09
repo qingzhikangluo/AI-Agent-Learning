@@ -154,8 +154,10 @@ button {
 }
 
 .page-actions {
-  align-items: center;
+  align-items: flex-end;
   display: flex;
+  flex-direction: column;
+  gap: 10px;
   min-height: 30px;
 }
 
@@ -283,17 +285,115 @@ h3 {
   grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.8fr);
 }
 
+.challenge-grid,
+.boss-grid,
+.transfer-grid {
+  align-items: start;
+  display: grid;
+  gap: 48px;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 0.9fr);
+}
+
 .btn {
   background: var(--accent);
   border: 1px solid transparent;
   border-radius: var(--radius);
   color: #fff;
+  display: inline-block;
   font-weight: 600;
   padding: 9px 16px;
+  text-decoration: none;
 }
 
 .btn:hover {
   filter: brightness(0.96);
+}
+
+.btn.secondary {
+  background: var(--surface);
+  border-color: var(--line);
+  color: var(--ink);
+}
+
+.btn.ghost {
+  background: transparent;
+  border-color: transparent;
+  color: var(--accent);
+}
+
+.btn[disabled] {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
+.action-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.terminal {
+  background: #101828;
+  border-radius: 8px;
+  color: #d0d5dd;
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  min-height: 132px;
+  padding: 16px;
+  white-space: pre-wrap;
+}
+
+.code-editor {
+  background: #fbfcfd;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  color: var(--ink);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+  min-height: 180px;
+  padding: 14px;
+  resize: vertical;
+  width: 100%;
+}
+
+.code-editor:disabled {
+  background: #f2f4f7;
+  color: var(--locked);
+}
+
+.test-ledger {
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.test-row {
+  align-items: center;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  display: flex;
+  font-size: 14px;
+  gap: 12px;
+  justify-content: space-between;
+  padding: 11px 14px;
+}
+
+.test-row:last-child {
+  border-bottom: 0;
+}
+
+.hint-box {
+  background: #fff7ed;
+  border: 1px solid #fed7aa;
+  border-radius: var(--radius);
+  color: #7c2d12;
+  font-size: 14px;
+  margin-top: 12px;
+  padding: 12px 14px;
 }
 
 .track {
@@ -520,7 +620,10 @@ code {
 
   .route-progress,
   .dashboard-grid,
-  .mission-grid {
+  .mission-grid,
+  .challenge-grid,
+  .boss-grid,
+  .transfer-grid {
     grid-template-columns: 1fr;
   }
 
