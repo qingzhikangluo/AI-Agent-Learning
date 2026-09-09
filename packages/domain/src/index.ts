@@ -8,6 +8,7 @@ export type {
   EvidenceResult,
   HintUsage
 } from './evidence'
+export type { Hint } from './hint'
 export {
   FailureCategory,
   type EvaluationResult,

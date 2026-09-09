@@ -29,6 +29,14 @@ export const learningBlockSchema = z.object({
   body: z.string().min(1)
 })
 
+export const hintSchema = z.object({
+  id: z.string().min(1),
+  level: z.number().int().min(0),
+  content: z.string().min(1)
+})
+
+export const hintListSchema = z.array(hintSchema)
+
 export const challengeSchema = z.object({
   id: z.string().min(1),
   missionId: z.string().min(1),

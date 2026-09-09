@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 1 至 EPIC 3 完成；EPIC 4 — Player Runtime 完成（TASK-019 至 TASK-022）**。
+当前进度：**EPIC 1 至 EPIC 4 完成；EPIC 5 — Hint Engine（TASK-023 完成）**。
 
 ## Repository Structure
 

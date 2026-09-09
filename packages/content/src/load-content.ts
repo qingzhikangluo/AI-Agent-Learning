@@ -4,13 +4,18 @@ import { fileURLToPath } from 'node:url'
 import { load as parseYaml } from 'js-yaml'
 import { z } from 'zod'
 
-import { challengeSchema, missionSchema } from './schemas'
+import {
+  challengeSchema,
+  hintListSchema,
+  missionSchema
+} from './schemas'
 
 export class ContentValidationError extends Error {}
 
 const moduleDir = dirname(fileURLToPath(import.meta.url))
 export const contentRoot = resolve(moduleDir, '..')
 export const missionsContentDir = join(contentRoot, 'missions')
+export const hintsContentDir = join(contentRoot, 'hints')
 
 async function collectContentFiles(dirPath: string): Promise<string[]> {
   const entries = await readdir(dirPath, { withFileTypes: true }).catch(
@@ -106,4 +111,24 @@ export async function loadChallenges(
   dirPath: string
 ): Promise<Array<z.infer<typeof challengeSchema>>> {
   return loadContentFiles(dirPath, challengeSchema)
+}
+
+export async function loadHintCollections(
+  dirPath: string
+): Promise<Array<z.infer<typeof hintListSchema>>> {
+  const files = await collectContentFiles(dirPath)
+  const collections: Array<z.infer<typeof hintListSchema>> = []
+
+  for (const file of files) {
+    collections.push(await loadValidatedFile(file, hintListSchema))
+  }
+
+  return collections
+}
+
+export async function loadHints(
+  dirPath: string = hintsContentDir
+): Promise<Array<z.infer<typeof hintListSchema>[number]>> {
+  const collections = await loadHintCollections(dirPath)
+  return collections.flat()
 }

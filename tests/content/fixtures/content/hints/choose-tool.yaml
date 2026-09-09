@@ -1,0 +1,9 @@
+- id: choose-tool-hint-1
+  level: 1
+  content: "先读工具的 description，再看用户意图。"
+- id: choose-tool-hint-2
+  level: 2
+  content: "用户问天气时，应选择 get_weather 而不是 search_faq。"
+- id: choose-tool-hint-3
+  level: 3
+  content: "确认工具调用参数里的 city 是否来自用户原话。"
