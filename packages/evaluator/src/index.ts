@@ -16,3 +16,9 @@ export {
   evaluateToolSequenceTestCase,
   evaluateToolSequences
 } from './tool-sequence'
+export {
+  UnsupportedBehaviorError as UnsupportedErrorHandlingBehaviorError,
+  evaluateErrorHandledTestCase,
+  evaluateErrorHandling,
+  type ErrorHandlingSubmission
+} from './error-handling'
