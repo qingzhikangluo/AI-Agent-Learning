@@ -20,4 +20,19 @@ describe('travel expense transfer content', () => {
     expect(challenge?.description).toContain('calculate_reimbursement')
     expect(challenge?.description).toContain('search_policy')
   })
+
+  it('defines transfer evaluation tests', async () => {
+    const [challenge] = await loadContentFiles(transferDir, challengeSchema)
+
+    expect(challenge?.tests).toHaveLength(5)
+    expect(challenge?.tests.map((test) => test.name)).toEqual(
+      expect.arrayContaining([
+        'Correct Tool',
+        'Wrong Tool',
+        'Multiple Tool',
+        'Tool Failure',
+        'No Tool'
+      ])
+    )
+  })
 })

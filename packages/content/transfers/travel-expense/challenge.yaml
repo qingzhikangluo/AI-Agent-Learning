@@ -9,4 +9,44 @@ description: >
 objectives:
   - 能在新业务场景中选择正确工具。
   - 能把 Tool Calling 能力迁移到差旅报销任务。
-tests: []
+tests:
+  - id: transfer-correct-tool
+    name: Correct Tool
+    visibility: public
+    input:
+      user: "上海到北京的距离是多少？"
+    expectedBehavior:
+      type: tool_called
+      value: calculate_distance
+  - id: transfer-wrong-tool
+    name: Wrong Tool
+    visibility: hidden
+    input:
+      user: "高铁报销标准是多少？"
+    expectedBehavior:
+      type: tool_not_called
+      value: calculate_distance
+  - id: transfer-multiple-tool
+    name: Multiple Tool
+    visibility: hidden
+    input:
+      user: "先算上海到北京的距离，再按标准计算报销。"
+    expectedBehavior:
+      type: tool_sequence
+      value: [calculate_distance, calculate_reimbursement]
+  - id: transfer-tool-failure
+    name: Tool Failure
+    visibility: hidden
+    input:
+      user: "查一个没有政策记录的城市报销标准。"
+    expectedBehavior:
+      type: error_handled
+      value: ""
+  - id: transfer-no-tool
+    name: No Tool
+    visibility: public
+    input:
+      user: "报销凭证要保留多久？"
+    expectedBehavior:
+      type: tool_not_called
+      value: ""
