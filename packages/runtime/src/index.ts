@@ -4,3 +4,4 @@ export type {
   Runtime,
   RuntimeLanguage
 } from './runtime'
+export { PythonRuntime } from './python-runtime'
