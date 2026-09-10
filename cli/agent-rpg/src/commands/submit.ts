@@ -9,16 +9,11 @@ import type {
   Evidence,
   FailureCategory,
   HintUsage,
-  Mission,
-  TestCase,
-  TestResult
+  Mission
 } from '@ai-agent-rpg/domain'
 import {
-  aggregateTestResults,
-  evaluateErrorHandling,
-  evaluateOutput,
-  evaluateToolCalls,
-  evaluateToolSequences,
+  evaluateTestCases,
+  submissionFromTrace,
   type ErrorHandlingSubmission,
   type ToolCall
 } from '@ai-agent-rpg/evaluator'
@@ -128,50 +123,17 @@ function resolveChallenge(
   return { challenge: active.challenge, mission }
 }
 
-function evaluateTest(
-  test: TestCase,
-  options: SubmitOptions,
-  trace?: AgentTrace
-): TestResult {
-  const behavior = test.expectedBehavior.type
-
-  if (behavior === 'exact' || behavior === 'contains') {
-    return evaluateOutput([test], {
-      output: options.output ?? trace?.output ?? ''
-    }).testResults[0]
-  }
-
-  if (behavior === 'tool_called' || behavior === 'tool_not_called') {
-    return evaluateToolCalls([test], {
-      toolCalls: trace?.toolCalls ?? options.toolCalls ?? []
-    }).testResults[0]
-  }
-
-  if (behavior === 'tool_sequence') {
-    return evaluateToolSequences([test], {
-      toolCalls: trace?.toolCalls ?? options.toolCalls ?? []
-    }).testResults[0]
-  }
-
-  return evaluateErrorHandling(
-    [test],
-    trace?.errorHandling ??
-      options.errorHandling ?? {
-        hadError: false,
-        recovered: false
-      }
-  ).testResults[0]
-}
-
 function evaluateChallenge(
   challenge: Challenge,
   options: SubmitOptions,
   traces?: AgentTrace[]
 ): EvaluationResult {
-  return aggregateTestResults(
-    challenge.tests.map((test, index) =>
-      evaluateTest(test, options, traces?.[index])
-    )
+  return evaluateTestCases(challenge.tests, (_, index) =>
+    submissionFromTrace(traces?.[index], {
+      output: options.output,
+      toolCalls: options.toolCalls,
+      errorHandling: options.errorHandling
+    })
   )
 }
 

@@ -13,6 +13,7 @@ export {
 export { mapExecutionFailure } from './error-mapping'
 export {
   normalizeAgentTrace,
+  runAgentTracesFromSource,
   runAgentTracesInWorkspace,
   type AgentTraceExecution
 } from './agent-trace'

@@ -11,7 +11,38 @@ import type {
 import { useLanguage } from '@/lib/i18n'
 import { StatusDot } from './status-dot'
 
-const failureChallengeIds = new Set(['choose-tool', 'tool-error'])
+interface ExecutionSummary {
+  exitCode: number
+  stdout: string
+  stderr: string
+  timedOut: boolean
+  durationMs: number
+}
+
+interface PublicTestResult {
+  testId: string
+  name: string
+  passed: boolean
+  failureCategory?: string
+  message?: string
+}
+
+interface TestSummary {
+  passed: boolean
+  score: number
+  publicResults: PublicTestResult[]
+  hiddenSummary: { total: number; passed: number }
+  failureCategories: string[]
+}
+
+function formatExecution(execution: ExecutionSummary): string {
+  return [
+    `exit code: ${execution.exitCode}`,
+    `duration: ${execution.durationMs}ms`,
+    `stdout: ${execution.stdout.trim() || '(empty)'}`,
+    `stderr: ${execution.stderr.trim() || '(empty)'}`
+  ].join('\n')
+}
 
 export function ChallengePage({
   challenge,
@@ -30,32 +61,81 @@ export function ChallengePage({
     'idle'
   )
   const [testPhase, setTestPhase] = useState<
-    'idle' | 'running' | 'passed' | 'failed'
+    'idle' | 'running' | 'done'
   >('idle')
+  const [output, setOutput] = useState(t('waitingRun'))
+  const [testSummary, setTestSummary] = useState<TestSummary | null>(null)
+  const [error, setError] = useState<string | null>(null)
   const [hintOpen, setHintOpen] = useState(false)
   const hint = getChallengeHint(challenge.id)
 
-  function handleRun() {
+  async function handleRun() {
     if (locked || runPhase === 'running') return
     setRunPhase('running')
     setTestPhase('idle')
-    window.setTimeout(() => setRunPhase('done'), 600)
+    setTestSummary(null)
+    setError(null)
+    setOutput(`${t('run')}…`)
+
+    try {
+      const response = await fetch('/api/run', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ challengeId: challenge.id, source: code })
+      })
+      const data = (await response.json()) as {
+        error?: string
+        execution?: ExecutionSummary
+      }
+
+      if (!response.ok || !data.execution) {
+        throw new Error(data.error ?? 'Run failed.')
+      }
+
+      setOutput(formatExecution(data.execution))
+      setRunPhase('done')
+    } catch (runError) {
+      const message =
+        runError instanceof Error ? runError.message : String(runError)
+      setError(message)
+      setOutput(message)
+      setRunPhase('idle')
+    }
   }
 
-  function handleTest() {
+  async function handleTest() {
     if (locked || runPhase !== 'done' || testPhase === 'running') return
     setTestPhase('running')
-    window.setTimeout(() => {
-      setTestPhase(failureChallengeIds.has(challenge.id) ? 'failed' : 'passed')
-    }, 600)
+    setError(null)
+
+    try {
+      const response = await fetch('/api/test', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ challengeId: challenge.id, source: code })
+      })
+      const data = (await response.json()) as TestSummary & {
+        error?: string
+      }
+
+      if (!response.ok || data.error) {
+        throw new Error(data.error ?? 'Tests failed to run.')
+      }
+
+      setTestSummary(data)
+      setTestPhase('done')
+    } catch (testError) {
+      const message =
+        testError instanceof Error ? testError.message : String(testError)
+      setError(message)
+      setTestPhase('idle')
+    }
   }
 
-  const output =
-    runPhase === 'running'
-      ? 'Running python main.py …\n'
-      : runPhase === 'done'
-      ? 'Running python main.py …\nexit code: 0\nstdout: result received\nstderr: (empty)'
-        : t('waitingRun')
+  const publicPassed =
+    testSummary?.publicResults.filter((result) => result.passed).length ?? 0
+  const publicFailed =
+    (testSummary?.publicResults.length ?? 0) - publicPassed
 
   return (
     <>
@@ -117,9 +197,7 @@ export function ChallengePage({
               className="btn secondary"
               type="button"
               disabled={
-                locked ||
-                runPhase !== 'done' ||
-                testPhase === 'running'
+                locked || runPhase !== 'done' || testPhase === 'running'
               }
               onClick={handleTest}
             >
@@ -143,50 +221,46 @@ export function ChallengePage({
           <h2 className="section-title section-spaced">
             {t('testResult')}
           </h2>
-          {testPhase === 'idle' || testPhase === 'running' ? (
-            <div className="empty">
-              {testPhase === 'running'
-                ? t('runningTests')
-                : t('testWaiting')}
-            </div>
-          ) : (
+          {testPhase === 'running' ? (
+            <div className="empty">{t('runningTests')}</div>
+          ) : testSummary ? (
             <div className="test-ledger">
               <div className="test-row">
                 <span>
-                  <strong>PASS</strong>{' '}
-                  {testPhase === 'passed'
-                    ? challenge.publicTests.length
-                    : 0}{' '}
-                  · <strong>FAIL</strong>{' '}
-                  {testPhase === 'failed' ? 1 : 0}
+                  <strong>PASS</strong> {publicPassed} ·{' '}
+                  <strong>FAIL</strong> {publicFailed}
                 </span>
                 <StatusDot
-                  status={testPhase === 'passed' ? 'passed' : 'failed'}
+                  status={testSummary.passed ? 'passed' : 'failed'}
                 />
               </div>
-              {testPhase === 'passed' ? (
-                challenge.publicTests.map((test) => (
-                  <div className="test-row" key={test.id}>
-                    <span>{test.name}</span>
-                    <span>PASS</span>
-                  </div>
-                ))
-              ) : (
+              {testSummary.publicResults.map((result) => (
+                <div className="test-row" key={result.testId}>
+                  <span>{result.name}</span>
+                  <span>{result.passed ? 'PASS' : 'FAIL'}</span>
+                </div>
+              ))}
+              {testSummary.hiddenSummary.total > 0 && (
                 <div className="test-row">
+                  <span>Hidden Tests</span>
                   <span>
-                    {challenge.publicTests[0]?.name ?? 'Public Test'}
+                    {testSummary.hiddenSummary.passed}/
+                    {testSummary.hiddenSummary.total}
                   </span>
-                  <span>FAIL</span>
                 </div>
               )}
-              {testPhase === 'failed' && (
+              {testSummary.failureCategories.length > 0 && (
                 <div className="test-row">
                   <span>{t('failureCategory')}</span>
-                  <span>tool_schema</span>
+                  <span>{testSummary.failureCategories.join(', ')}</span>
                 </div>
               )}
             </div>
+          ) : (
+            <div className="empty">{t('testWaiting')}</div>
           )}
+
+          {error && <div className="hint-box">{error}</div>}
 
           {hintOpen && (
             <>
@@ -205,9 +279,7 @@ export function ChallengePage({
           )}
 
           {locked && (
-            <p className="mission-note">
-              {t('lockedChallengeNote')}
-            </p>
+            <p className="mission-note">{t('lockedChallengeNote')}</p>
           )}
         </div>
       </section>

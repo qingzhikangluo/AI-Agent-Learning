@@ -8,6 +8,9 @@
     "types": ["node"],
     "strict": true,
     "noEmit": true,
+    "paths": {
+      "@/*": ["./apps/web/*"]
+    },
     "esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "skipLibCheck": true

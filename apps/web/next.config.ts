@@ -5,7 +5,9 @@ const nextConfig: NextConfig = {
   transpilePackages: [
     '@ai-agent-rpg/content',
     '@ai-agent-rpg/domain',
-    '@ai-agent-rpg/progression'
+    '@ai-agent-rpg/evaluator',
+    '@ai-agent-rpg/progression',
+    '@ai-agent-rpg/runtime'
   ]
 }
 

@@ -259,3 +259,18 @@ export async function runAgentTracesInWorkspace(
     await rm(harnessDir, { recursive: true, force: true })
   }
 }
+
+export async function runAgentTracesFromSource(
+  source: string,
+  inputs: unknown[],
+  timeoutMs = 15_000
+): Promise<AgentTraceExecution> {
+  const sourceDir = await mkdtemp(join(tmpdir(), 'agent-rpg-source-'))
+
+  try {
+    await writeFile(join(sourceDir, 'agent.py'), source, 'utf8')
+    return await runAgentTracesInWorkspace(sourceDir, inputs, timeoutMs)
+  } finally {
+    await rm(sourceDir, { recursive: true, force: true })
+  }
+}

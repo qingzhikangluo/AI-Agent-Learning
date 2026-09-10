@@ -2,7 +2,10 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
-import { runAgentTracesInWorkspace } from '@ai-agent-rpg/runtime'
+import {
+  runAgentTracesFromSource,
+  runAgentTracesInWorkspace
+} from '@ai-agent-rpg/runtime'
 import { describe, expect, it } from 'vitest'
 
 describe('agent trace runtime', () => {
@@ -87,5 +90,19 @@ describe('agent trace runtime', () => {
     } finally {
       await rm(workspaceDir, { recursive: true, force: true })
     }
+  })
+
+  it('runs trace inputs from a source string', async () => {
+    const result = await runAgentTracesFromSource(
+      [
+        'def run_agent(input):',
+        '    return {"output": "hello " + str(input.get("name", ""))}',
+        ''
+      ].join('\n'),
+      [{ name: 'Ada' }]
+    )
+
+    expect(result.execution.exitCode).toBe(0)
+    expect(result.traces[0]?.output).toBe('hello Ada')
   })
 })

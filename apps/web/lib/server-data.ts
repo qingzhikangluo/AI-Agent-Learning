@@ -8,7 +8,8 @@ import {
 import {
   ChallengeType,
   type Challenge,
-  type Mission
+  type Mission,
+  type TestCase
 } from '@ai-agent-rpg/domain'
 import {
   createPlayerStateFromMissionSeeds,
@@ -432,6 +433,43 @@ export async function loadTransferView(
 ): Promise<TransferSummary | undefined> {
   const state = await loadPlayerStateView()
   return state.transfer.id === transferId ? state.transfer : undefined
+}
+
+export async function loadChallengeRuntime(
+  challengeId: string
+): Promise<{ tests: TestCase[]; locked: boolean } | undefined> {
+  const content = await loadGameContent()
+  const state = await loadState(content)
+  const challenge = content.challenges.find(
+    (item) => item.id === challengeId
+  )
+
+  if (!challenge) return undefined
+
+  const missionIndex = content.missions.findIndex(
+    (mission) => mission.id === challenge.missionId
+  )
+  const missionChallenges =
+    content.challengesByMission[challenge.missionId] ?? []
+  const challengeIndex = missionChallenges.findIndex(
+    (item) => item.id === challenge.id
+  )
+  const status = resolveChallengeStatus(
+    challenge.id,
+    missionIndex,
+    challengeIndex,
+    state
+  )
+  const missionStatus = resolveMissionStatus(
+    challenge.missionId,
+    missionIndex,
+    state
+  )
+
+  return {
+    tests: challenge.tests,
+    locked: missionStatus === 'locked' || status === 'locked'
+  }
 }
 
 export async function listMissionIds(): Promise<string[]> {

@@ -24,3 +24,9 @@ export {
 } from './error-handling'
 export { aggregateEvaluations, aggregateTestResults } from './aggregate'
 export { scoreBoss, scoreStructuredAnswers } from './boss-score'
+export {
+  evaluateTestCase,
+  evaluateTestCases,
+  submissionFromTrace,
+  type ChallengeSubmission
+} from './submission'
