@@ -1,6 +1,12 @@
 export type { Player } from './player'
 export type { BossSubmission } from './submission'
 export type { Challenge } from './challenge'
+export type {
+  AgentErrorHandling,
+  AgentToolCall,
+  AgentTrace,
+  AgentTraceStep
+} from './trace'
 export { ChallengeType } from './challenge'
 export type {
   Attempt,

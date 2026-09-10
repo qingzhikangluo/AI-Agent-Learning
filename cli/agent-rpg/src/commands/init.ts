@@ -15,9 +15,20 @@ export async function initWorkspace(options: InitOptions): Promise<string> {
 
   const files: Record<string, string> = {
     'agent.py':
+      'def run_agent(input):\n' +
+      '    """Return an AgentTrace-compatible dict for one challenge input."""\n' +
+      '    message = input.get("message") if isinstance(input, dict) else input\n' +
+      '    return {\n' +
+      '        "output": str(message or ""),\n' +
+      '        "tool_calls": [],\n' +
+      '        "steps": [{"type": "final", "content": str(message or "")}],\n' +
+      '        "error_handling": {"had_error": False, "recovered": False},\n' +
+      '    }\n' +
+      '\n' +
+      '\n' +
       'def handle(user_message: str) -> str:\n' +
-      '    """Handle one user message with an agent loop."""\n' +
-      '    return user_message\n',
+      '    """Handle one user message with a minimal agent loop."""\n' +
+      '    return str(run_agent(user_message)["output"])\n',
     'main.py':
       'from agent import handle\n\n\n' +
       'def main() -> None:\n' +

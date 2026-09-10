@@ -11,7 +11,9 @@ tests:
     name: 失败后修正参数重试
     visibility: public
     input:
+      message: "查询天气"
       tool_error: "missing required field: city"
     expectedBehavior:
       type: contains
       value: "补充参数"
+    failureCategory: error_handling

@@ -13,7 +13,7 @@ tests:
     input:
       question: "用户问上海天气，应该调用哪个工具？"
     expectedBehavior:
-      type: contains
+      type: tool_called
       value: "get_weather"
   - id: choose-tool-002
     name: 未知问题不硬调用

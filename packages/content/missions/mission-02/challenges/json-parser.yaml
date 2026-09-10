@@ -11,8 +11,9 @@ tests:
     name: 提取字段
     visibility: public
     input:
+      message: "读取嵌套字段"
       payload: '{"user": {"name": "Ada"}}'
-      question: "如何读取 name 字段？"
     expectedBehavior:
       type: contains
-      value: "user"
+      value: "Ada"
+    failureCategory: json

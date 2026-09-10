@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 Web UI 完成；EPIC 12 — 垂直切片闭合（P0-1 状态持久化、P0-2 评测与解锁、P0-3 Web 接真实 Content/State 完成）**。
+当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 Web UI 完成；EPIC 12 — 垂直切片闭合（P0 完成；P1-1 真实执行与 trace 评测完成）**。
 
 ## Repository Structure
 
@@ -58,6 +58,10 @@ Web UI 在服务端读取 `packages/content` 与这份状态文件；未初始�
 ```bash
 agent-rpg submit --challenge <challenge-id> "<answer>"
 ```
+
+`submit` 会为每个测试用例执行一次玩家 `agent.py`。玩家代码实现
+`run_agent(input)`，返回 `output` / `tool_calls` / `steps` / `error_handling`，
+由 evaluator 做确定性判定；仅在显式传入 `<answer>` 时，输出题使用该文本。
 
 TASK-001 阶段使用 Node.js 内置能力作为最小可运行基线：
 

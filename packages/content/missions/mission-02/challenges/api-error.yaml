@@ -11,7 +11,9 @@ tests:
     name: 识别超时
     visibility: public
     input:
-      question: "请求长时间没有响应，应该怎么处理？"
+      message: "请求长时间没有响应"
+      error: "timeout"
     expectedBehavior:
       type: contains
       value: "超时"
+    failureCategory: api

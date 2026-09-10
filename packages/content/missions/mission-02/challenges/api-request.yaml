@@ -11,7 +11,11 @@ tests:
     name: 请求后读取响应
     visibility: public
     input:
-      question: "如何安全地处理一次 API 请求？"
+      message: "读取用户资料"
+      response:
+        status: 200
+        body: '{"user": {"name": "Ada"}}'
     expectedBehavior:
       type: contains
-      value: "检查状态码"
+      value: "Ada"
+    failureCategory: api

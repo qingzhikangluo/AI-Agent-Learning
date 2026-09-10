@@ -11,3 +11,8 @@ export {
   runWorkspaceEntry
 } from './test-runner'
 export { mapExecutionFailure } from './error-mapping'
+export {
+  normalizeAgentTrace,
+  runAgentTracesInWorkspace,
+  type AgentTraceExecution
+} from './agent-trace'

@@ -11,7 +11,9 @@ tests:
     name: 循环包含工具结果回填
     visibility: public
     input:
-      question: "工具调用完成后，下一步应该做什么？"
+      message: "查询天气"
+      tool_result: "晴"
     expectedBehavior:
       type: contains
-      value: "把结果返回给模型"
+      value: "晴"
+    failureCategory: agent_loop

@@ -2,16 +2,19 @@ import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
 import type {
+  AgentTrace,
   Attempt,
   Challenge,
   EvaluationResult,
   Evidence,
   FailureCategory,
   HintUsage,
-  Mission
+  Mission,
+  TestCase,
+  TestResult
 } from '@ai-agent-rpg/domain'
 import {
-  aggregateEvaluations,
+  aggregateTestResults,
   evaluateErrorHandling,
   evaluateOutput,
   evaluateToolCalls,
@@ -19,6 +22,7 @@ import {
   type ErrorHandlingSubmission,
   type ToolCall
 } from '@ai-agent-rpg/evaluator'
+import { runAgentTracesInWorkspace } from '@ai-agent-rpg/runtime'
 import {
   calculateSkillLevel,
   FilePlayerStateStore,
@@ -39,6 +43,7 @@ export interface SubmitOptions {
   output?: string
   toolCalls?: ToolCall[]
   errorHandling?: ErrorHandlingSubmission
+  traces?: AgentTrace[]
   hintUsages?: HintUsage[]
   explanation?: string
   submittedAt?: string
@@ -123,65 +128,51 @@ function resolveChallenge(
   return { challenge: active.challenge, mission }
 }
 
+function evaluateTest(
+  test: TestCase,
+  options: SubmitOptions,
+  trace?: AgentTrace
+): TestResult {
+  const behavior = test.expectedBehavior.type
+
+  if (behavior === 'exact' || behavior === 'contains') {
+    return evaluateOutput([test], {
+      output: options.output ?? trace?.output ?? ''
+    }).testResults[0]
+  }
+
+  if (behavior === 'tool_called' || behavior === 'tool_not_called') {
+    return evaluateToolCalls([test], {
+      toolCalls: trace?.toolCalls ?? options.toolCalls ?? []
+    }).testResults[0]
+  }
+
+  if (behavior === 'tool_sequence') {
+    return evaluateToolSequences([test], {
+      toolCalls: trace?.toolCalls ?? options.toolCalls ?? []
+    }).testResults[0]
+  }
+
+  return evaluateErrorHandling(
+    [test],
+    trace?.errorHandling ??
+      options.errorHandling ?? {
+        hadError: false,
+        recovered: false
+      }
+  ).testResults[0]
+}
+
 function evaluateChallenge(
   challenge: Challenge,
-  options: SubmitOptions
+  options: SubmitOptions,
+  traces?: AgentTrace[]
 ): EvaluationResult {
-  const outputTests = challenge.tests.filter(
-    (test) =>
-      test.expectedBehavior.type === 'exact' ||
-      test.expectedBehavior.type === 'contains'
-  )
-  const toolCallTests = challenge.tests.filter(
-    (test) =>
-      test.expectedBehavior.type === 'tool_called' ||
-      test.expectedBehavior.type === 'tool_not_called'
-  )
-  const toolSequenceTests = challenge.tests.filter(
-    (test) => test.expectedBehavior.type === 'tool_sequence'
-  )
-  const errorHandlingTests = challenge.tests.filter(
-    (test) => test.expectedBehavior.type === 'error_handled'
-  )
-  const evaluations: EvaluationResult[] = []
-
-  if (outputTests.length > 0) {
-    evaluations.push(
-      evaluateOutput(outputTests, {
-        output: options.output ?? ''
-      })
+  return aggregateTestResults(
+    challenge.tests.map((test, index) =>
+      evaluateTest(test, options, traces?.[index])
     )
-  }
-
-  if (toolCallTests.length > 0) {
-    evaluations.push(
-      evaluateToolCalls(toolCallTests, {
-        toolCalls: options.toolCalls ?? []
-      })
-    )
-  }
-
-  if (toolSequenceTests.length > 0) {
-    evaluations.push(
-      evaluateToolSequences(toolSequenceTests, {
-        toolCalls: options.toolCalls ?? []
-      })
-    )
-  }
-
-  if (errorHandlingTests.length > 0) {
-    evaluations.push(
-      evaluateErrorHandling(
-        errorHandlingTests,
-        options.errorHandling ?? {
-          hadError: false,
-          recovered: false
-        }
-      )
-    )
-  }
-
-  return aggregateEvaluations(evaluations)
+  )
 }
 
 function upsertSkill(
@@ -452,7 +443,28 @@ export async function submitWorkspace(
   const state = await ensurePlayerState(store)
   const content = await loadGameContent()
   const resolved = resolveChallenge(content, state, options.challengeId)
-  const evaluation = evaluateChallenge(resolved.challenge, options)
+  const needsRuntimeTrace = resolved.challenge.tests.some(
+    (test) =>
+      test.expectedBehavior.type === 'tool_called' ||
+      test.expectedBehavior.type === 'tool_not_called' ||
+      test.expectedBehavior.type === 'tool_sequence' ||
+      test.expectedBehavior.type === 'error_handled'
+  )
+  const shouldRunRuntime =
+    !options.traces && (!options.output || needsRuntimeTrace)
+  const traceExecution =
+    shouldRunRuntime
+      ? await runAgentTracesInWorkspace(
+          workspaceDir,
+          resolved.challenge.tests.map((test) => test.input)
+        )
+      : undefined
+  const traces = options.traces ?? traceExecution?.traces
+  const evaluation = evaluateChallenge(
+    resolved.challenge,
+    options,
+    traces
+  )
   let applied: AppliedSubmission | undefined
 
   await store.update((current) => {
@@ -463,7 +475,8 @@ export async function submitWorkspace(
     )
     const currentEvaluation = evaluateChallenge(
       currentResolved.challenge,
-      options
+      options,
+      traces
     )
     applied = applySubmission({
       state: current,
@@ -497,6 +510,7 @@ export async function submitWorkspace(
     challengeId: resolved.challenge.id,
     missionId: resolved.mission.id,
     output: options.output ?? '',
+    traces: traces ?? [],
     toolCalls: options.toolCalls ?? [],
     errorHandling: options.errorHandling ?? null,
     hintUsages: options.hintUsages ?? [],
@@ -509,6 +523,15 @@ export async function submitWorkspace(
       feedback: evaluation.feedback,
       testResults: evaluation.testResults
     },
+    runtime: traceExecution
+      ? {
+          exitCode: traceExecution.execution.exitCode,
+          stdout: traceExecution.execution.stdout,
+          stderr: traceExecution.execution.stderr,
+          timedOut: traceExecution.execution.timedOut,
+          durationMs: traceExecution.execution.durationMs
+        }
+      : null,
     source: sourceParts.join('\n\n'),
     readme: await readOptionalFile(join(workspaceDir, 'README.md'))
   }
