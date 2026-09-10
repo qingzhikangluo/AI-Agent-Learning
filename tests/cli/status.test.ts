@@ -1,7 +1,12 @@
-import { mkdtemp, rm, writeFile } from 'node:fs/promises'
+import { mkdtemp, rm } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
+import { SkillLevel } from '@ai-agent-rpg/domain'
+import {
+  createEmptyPlayerState,
+  FilePlayerStateStore
+} from '@ai-agent-rpg/progression'
 import {
   defaultStatus,
   formatStatus,
@@ -41,14 +46,27 @@ describe('agent-rpg status', () => {
     const workspaceDir = await mkdtemp(join(tmpdir(), 'agent-rpg-status-'))
 
     try {
-      await writeFile(
-        join(workspaceDir, '.agent-rpg-status.json'),
-        JSON.stringify({ currentMission: 'mission-04', skills: [], boss: 'locked', transfer: 'locked' }),
-        'utf8'
-      )
+      const store = new FilePlayerStateStore(workspaceDir)
+      await store.write({
+        ...createEmptyPlayerState(),
+        currentMissionId: 'mission-04',
+        skills: [
+          {
+            skillId: 'tool.selection',
+            level: SkillLevel.INDEPENDENT,
+            confidence: 1,
+            strengths: ['Passed choose-tool'],
+            weaknesses: [],
+            updatedAt: '2026-09-10T00:00:00.000Z'
+          }
+        ],
+        boss: { id: 'first-agent-boss', status: 'in-progress' }
+      })
 
       const status = await readStatus(workspaceDir)
       expect(status.currentMission).toBe('mission-04')
+      expect(status.skills).toEqual(['tool.selection'])
+      expect(status.boss).toBe('in-progress')
     } finally {
       await rm(workspaceDir, { recursive: true, force: true })
     }

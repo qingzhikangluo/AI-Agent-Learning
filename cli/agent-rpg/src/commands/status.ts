@@ -1,5 +1,8 @@
-import { readFile } from 'node:fs/promises'
-import { join } from 'node:path'
+import {
+  createEmptyPlayerState,
+  FilePlayerStateStore,
+  type PlayerState
+} from '@ai-agent-rpg/progression'
 
 export interface PlayerStatus {
   currentMission: string
@@ -9,25 +12,27 @@ export interface PlayerStatus {
 }
 
 export function defaultStatus(): PlayerStatus {
+  return statusFromState(createEmptyPlayerState())
+}
+
+export function statusFromState(state: PlayerState): PlayerStatus {
   return {
-    currentMission: 'mission-01',
-    skills: [],
-    boss: 'locked',
-    transfer: 'locked'
+    currentMission: state.currentMissionId,
+    skills: state.skills
+      .filter((skill) => skill.level > 0)
+      .map((skill) => skill.skillId)
+      .sort(),
+    boss: state.boss.status,
+    transfer: state.transfer.status
   }
 }
 
 export async function readStatus(
   workspaceDir: string
 ): Promise<PlayerStatus> {
-  const filePath = join(workspaceDir, '.agent-rpg-status.json')
-
-  try {
-    const raw = await readFile(filePath, 'utf8')
-    return JSON.parse(raw) as PlayerStatus
-  } catch {
-    return defaultStatus()
-  }
+  const store = new FilePlayerStateStore(workspaceDir)
+  const state = (await store.read()) ?? createEmptyPlayerState()
+  return statusFromState(state)
 }
 
 export function formatStatus(status: PlayerStatus): string {

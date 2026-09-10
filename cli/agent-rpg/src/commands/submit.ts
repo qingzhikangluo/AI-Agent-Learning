@@ -1,6 +1,11 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises'
 import { join } from 'node:path'
 
+import {
+  FilePlayerStateStore,
+  FIRST_BOSS_ID
+} from '@ai-agent-rpg/progression'
+
 export interface SubmitOptions {
   workspaceDir: string
   explanation: string
@@ -46,5 +51,23 @@ export async function submitWorkspace(
   }
 
   await writeFile(submissionPath, JSON.stringify(payload, null, 2), 'utf8')
+
+  const stateStore = new FilePlayerStateStore(workspaceDir)
+  await stateStore.update((state) => ({
+    ...state,
+    updatedAt: submittedAt,
+    submissions: [
+      ...state.submissions,
+      {
+        id: submissionId,
+        challengeId: FIRST_BOSS_ID,
+        submittedAt,
+        testResult: payload.testResult,
+        explanation: options.explanation,
+        submissionPath
+      }
+    ]
+  }))
+
   return { submissionId, submissionPath }
 }

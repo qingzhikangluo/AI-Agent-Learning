@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 — Web UI（视觉方向已确认，Dashboard、Mission、Missions、Challenge、Boss、Transfer、Progress 与 Assessment 页面均已实现）**。
+当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 Web UI 完成；EPIC 12 — 垂直切片闭合（P0-1 玩家状态持久化完成）**。
 
 ## Repository Structure
 
@@ -49,6 +49,8 @@ npm run dev --workspace @ai-agent-rpg/web
 访问 http://localhost:3000/missions 查看 Mission Map。
 访问 http://localhost:3000/progress 查看 Progress。
 界面语言可在侧栏底部切换中文 / English。
+
+CLI 运行状态保存在 `player-workspace/.agent-rpg/state.json`（由 `agent-rpg init` 创建，`submit` 更新）。
 
 TASK-001 阶段使用 Node.js 内置能力作为最小可运行基线：
 

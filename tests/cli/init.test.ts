@@ -3,6 +3,7 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 import { initWorkspace } from '../../cli/agent-rpg/src/commands/init'
+import { FilePlayerStateStore } from '@ai-agent-rpg/progression'
 import { describe, expect, it } from 'vitest'
 
 describe('agent-rpg init', () => {
@@ -21,6 +22,11 @@ describe('agent-rpg init', () => {
       expect(mainPy).toContain('def main')
       expect(toolsPy).toContain('# Define the tools')
       expect(readme).toContain('agent-rpg test')
+
+      const state = await new FilePlayerStateStore(workspaceDir).read()
+      expect(state?.currentMissionId).toBe('mission-01')
+      expect(state?.boss.status).toBe('locked')
+      expect(state?.transfer.status).toBe('locked')
     } finally {
       await rm(workspaceDir, { recursive: true, force: true })
     }

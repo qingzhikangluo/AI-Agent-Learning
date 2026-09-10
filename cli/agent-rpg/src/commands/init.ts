@@ -1,6 +1,11 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 
+import {
+  createEmptyPlayerState,
+  FilePlayerStateStore
+} from '@ai-agent-rpg/progression'
+
 export interface InitOptions {
   workspaceDir: string
 }
@@ -31,6 +36,12 @@ export async function initWorkspace(options: InitOptions): Promise<string> {
 
   for (const [name, content] of Object.entries(files)) {
     await writeFile(join(workspaceDir, name), content, 'utf8')
+  }
+
+  const stateStore = new FilePlayerStateStore(workspaceDir)
+  const existingState = await stateStore.read()
+  if (!existingState) {
+    await stateStore.write(createEmptyPlayerState())
   }
 
   return workspaceDir

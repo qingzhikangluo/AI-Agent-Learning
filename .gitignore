@@ -9,6 +9,10 @@ coverage/
 .next/
 *.tsbuildinfo
 
+# player runtime state
+.agent-rpg/
+.agent-rpg-status.json
+
 # python
 __pycache__/
 .pytest_cache/

@@ -4,6 +4,7 @@ import { join } from 'node:path'
 
 import { initWorkspace } from '../../cli/agent-rpg/src/commands/init'
 import { submitWorkspace } from '../../cli/agent-rpg/src/commands/submit'
+import { FilePlayerStateStore } from '@ai-agent-rpg/progression'
 import { describe, expect, it } from 'vitest'
 
 describe('agent-rpg submit', () => {
@@ -32,6 +33,14 @@ describe('agent-rpg submit', () => {
       expect(saved.readme).toContain('agent-rpg test')
       expect(saved.testResult).toBe('4/4 public tests passed')
       expect(saved.explanation).toContain('get_weather')
+
+      const state = await new FilePlayerStateStore(workspaceDir).read()
+      expect(state?.submissions).toHaveLength(1)
+      expect(state?.submissions[0]?.challengeId).toBe('first-agent-boss')
+      expect(state?.submissions[0]?.testResult).toBe(
+        '4/4 public tests passed'
+      )
+      expect(state?.updatedAt).toBe('2026-09-09T00:00:00.000Z')
     } finally {
       await rm(workspaceDir, { recursive: true, force: true })
     }
