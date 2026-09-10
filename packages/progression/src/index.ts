@@ -1,6 +1,7 @@
 export { InMemoryEvidenceRecorder } from './evidence-recorder'
 export {
   createEmptyPlayerState,
+  createPlayerStateFromMissionSeeds,
   DEFAULT_MISSION_ID,
   DEFAULT_PLAYER_ID,
   FileEvidenceRecorder,
@@ -23,6 +24,7 @@ export {
   type PlayerSkillState,
   type PlayerState,
   type PlayerStateStore,
+  type MissionSeed,
   type SubmissionRecord
 } from './player-state'
 export { calculateSkillLevel } from './skill-level-calculator'

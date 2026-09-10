@@ -2,27 +2,25 @@
 
 import { useState } from 'react'
 
-import {
-  getChallengeDetail,
-  getChallengeHint
-} from '@/lib/challenge-data'
+import { getChallengeHint } from '@/lib/challenge-examples'
 import { useLanguage } from '@/lib/i18n'
 
 export function ChallengeHint({
-  challengeId
+  challengeId,
+  challengeType
 }: {
   challengeId: string
+  challengeType: 'concept' | 'code'
 }) {
   const { t } = useLanguage()
   const [open, setOpen] = useState(false)
-  const challenge = getChallengeDetail(challengeId)
   const hint = getChallengeHint(challengeId)
 
-  if (!challenge || !hint) return null
+  if (!hint) return null
 
   const label = open
     ? t('collapseExample')
-    : challenge.type === 'code'
+    : challengeType === 'code'
       ? t('hintShowCode')
       : t('hintShowAnswer')
 
@@ -32,7 +30,7 @@ export function ChallengeHint({
         className="hint-toggle"
         type="button"
         aria-expanded={open}
-        aria-controls={`hint-${challenge.id}`}
+        aria-controls={`hint-${challengeId}`}
         onClick={() => setOpen((current) => !current)}
       >
         {label}
@@ -40,7 +38,7 @@ export function ChallengeHint({
       {open && (
         <div
           className="hint-sample"
-          id={`hint-${challenge.id}`}
+          id={`hint-${challengeId}`}
         >
           <p>{hint.hintText}</p>
           <pre>

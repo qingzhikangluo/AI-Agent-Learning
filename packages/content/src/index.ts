@@ -1,4 +1,5 @@
 export {
+  bossesContentDir,
   ContentValidationError,
   contentRoot,
   loadChallenges,
@@ -7,6 +8,7 @@ export {
   loadHints,
   loadMissions,
   missionsContentDir,
+  transfersContentDir,
   loadValidatedFile,
   hintsContentDir
 } from './load-content'

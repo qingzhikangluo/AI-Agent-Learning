@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 Web UI 完成；EPIC 12 — 垂直切片闭合（P0-1 玩家状态持久化、P0-2 submit 评测与解锁完成）**。
+当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 Web UI 完成；EPIC 12 — 垂直切片闭合（P0-1 状态持久化、P0-2 评测与解锁、P0-3 Web 接真实 Content/State 完成）**。
 
 ## Repository Structure
 
@@ -51,6 +51,7 @@ npm run dev --workspace @ai-agent-rpg/web
 界面语言可在侧栏底部切换中文 / English。
 
 CLI 运行状态保存在 `player-workspace/.agent-rpg/state.json`（由 `agent-rpg init` 创建，`submit` 更新）。
+Web UI 在服务端读取 `packages/content` 与这份状态文件；未初始化时显示默认进度，不写入玩家状态。
 
 提交当前 Challenge：
 

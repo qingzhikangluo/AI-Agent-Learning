@@ -7,10 +7,9 @@ import {
 } from '@ai-agent-rpg/content'
 import type { Challenge, Mission } from '@ai-agent-rpg/domain'
 import {
-  createEmptyPlayerState,
+  createPlayerStateFromMissionSeeds,
   DEFAULT_PLAYER_ID,
-  type PlayerChallengeState,
-  type PlayerMissionState,
+  type MissionSeed,
   type PlayerState,
   type PlayerStateStore
 } from '@ai-agent-rpg/progression'
@@ -49,38 +48,15 @@ export async function createSeededPlayerState(
   now: string = new Date().toISOString()
 ): Promise<PlayerState> {
   const content = await loadGameContent()
-  const empty = createEmptyPlayerState(playerId, now)
-  const firstMissionId = content.missions[0]?.id ?? empty.currentMissionId
+  const seeds: MissionSeed[] = content.missions.map((mission) => ({
+    id: mission.id,
+    challengeIds: (
+      content.challengesByMission[mission.id] ?? []
+    ).map((challenge) => challenge.id),
+    bossId: mission.bossId
+  }))
 
-  const missions: PlayerMissionState[] = content.missions.map(
-    (mission, index) => ({
-      id: mission.id,
-      status: index === 0 ? 'active' : 'locked'
-    })
-  )
-  const challenges: PlayerChallengeState[] = content.missions.flatMap(
-    (mission, missionIndex) =>
-      (content.challengesByMission[mission.id] ?? []).map(
-        (challenge, challengeIndex) => ({
-          id: challenge.id,
-          missionId: mission.id,
-          status:
-            missionIndex === 0 && challengeIndex === 0
-              ? 'active'
-              : 'locked',
-          attempts: 0,
-          hintsUsed: 0,
-          failureCategories: []
-        })
-      )
-  )
-
-  return {
-    ...empty,
-    currentMissionId: firstMissionId,
-    missions,
-    challenges
-  }
+  return createPlayerStateFromMissionSeeds(playerId, seeds, now)
 }
 
 export async function ensurePlayerState(

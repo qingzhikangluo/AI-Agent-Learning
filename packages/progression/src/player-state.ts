@@ -218,6 +218,48 @@ export function createEmptyPlayerState(
   }
 }
 
+export interface MissionSeed {
+  id: string
+  challengeIds: string[]
+  bossId?: string
+}
+
+export function createPlayerStateFromMissionSeeds(
+  playerId: string = DEFAULT_PLAYER_ID,
+  missionSeeds: MissionSeed[],
+  now: string = new Date().toISOString()
+): PlayerState {
+  const empty = createEmptyPlayerState(playerId, now)
+  const firstMissionId = missionSeeds[0]?.id ?? empty.currentMissionId
+  const finalMission = missionSeeds[missionSeeds.length - 1]
+
+  return {
+    ...empty,
+    currentMissionId: firstMissionId,
+    missions: missionSeeds.map((mission, index) => ({
+      id: mission.id,
+      status: index === 0 ? 'active' : 'locked'
+    })),
+    challenges: missionSeeds.flatMap((mission, missionIndex) =>
+      mission.challengeIds.map((challengeId, challengeIndex) => ({
+        id: challengeId,
+        missionId: mission.id,
+        status:
+          missionIndex === 0 && challengeIndex === 0
+            ? ('active' as const)
+            : ('locked' as const),
+        attempts: 0,
+        hintsUsed: 0,
+        failureCategories: []
+      }))
+    ),
+    boss: {
+      id: finalMission?.bossId ?? empty.boss.id,
+      status: 'locked'
+    }
+  }
+}
+
 export interface PlayerStateStore {
   read(): Promise<PlayerState | undefined>
   write(state: PlayerState): Promise<void>

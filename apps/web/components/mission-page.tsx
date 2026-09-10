@@ -52,7 +52,10 @@ export function MissionPage({ mission }: { mission: MissionSummary }) {
             {content}
           </a>
         )}
-        <ChallengeHint challengeId={challenge.id} />
+        <ChallengeHint
+          challengeId={challenge.id}
+          challengeType={challenge.type}
+        />
       </div>
     )
   })

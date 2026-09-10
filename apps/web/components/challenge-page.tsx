@@ -2,11 +2,11 @@
 
 import { useState } from 'react'
 
-import {
-  getChallengeHint,
-  type ChallengeDetail
-} from '@/lib/challenge-data'
-import type { ChallengeStatus } from '@/lib/player-data'
+import { getChallengeHint } from '@/lib/challenge-examples'
+import type {
+  ChallengeDetail,
+  ChallengeStatus
+} from '@/lib/player-data'
 
 import { useLanguage } from '@/lib/i18n'
 import { StatusDot } from './status-dot'

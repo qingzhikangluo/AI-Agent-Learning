@@ -1,26 +1,25 @@
 import { AppShell } from '@/components/app-shell'
 import { BossPage } from '@/components/boss-page'
-import { playerState } from '@/lib/player-data'
+import { loadBossView } from '@/lib/server-data'
 import { notFound } from 'next/navigation'
 
 type BossRouteProps = {
   params: Promise<{ id: string }>
 }
 
-export function generateStaticParams() {
-  return [{ id: playerState.boss.id }]
-}
+export const dynamic = 'force-dynamic'
 
 export default async function BossRoute({ params }: BossRouteProps) {
   const { id } = await params
+  const boss = await loadBossView(id)
 
-  if (id !== playerState.boss.id) {
+  if (!boss) {
     notFound()
   }
 
   return (
     <AppShell>
-      <BossPage boss={playerState.boss} />
+      <BossPage boss={boss} />
     </AppShell>
   )
 }

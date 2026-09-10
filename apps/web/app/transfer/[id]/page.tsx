@@ -1,28 +1,27 @@
 import { AppShell } from '@/components/app-shell'
 import { TransferPage } from '@/components/transfer-page'
-import { playerState } from '@/lib/player-data'
+import { loadTransferView } from '@/lib/server-data'
 import { notFound } from 'next/navigation'
 
 type TransferRouteProps = {
   params: Promise<{ id: string }>
 }
 
-export function generateStaticParams() {
-  return [{ id: playerState.transfer.id }]
-}
+export const dynamic = 'force-dynamic'
 
 export default async function TransferRoute({
   params
 }: TransferRouteProps) {
   const { id } = await params
+  const transfer = await loadTransferView(id)
 
-  if (id !== playerState.transfer.id) {
+  if (!transfer) {
     notFound()
   }
 
   return (
     <AppShell>
-      <TransferPage transfer={playerState.transfer} />
+      <TransferPage transfer={transfer} />
     </AppShell>
   )
 }

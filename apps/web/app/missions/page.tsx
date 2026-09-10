@@ -1,11 +1,15 @@
 import { AppShell } from '@/components/app-shell'
 import { MissionsPage } from '@/components/missions-page'
-import { playerState } from '@/lib/player-data'
+import { loadPlayerStateView } from '@/lib/server-data'
 
-export default function MissionsRoute() {
+export const dynamic = 'force-dynamic'
+
+export default async function MissionsRoute() {
+  const state = await loadPlayerStateView()
+
   return (
     <AppShell>
-      <MissionsPage state={playerState} />
+      <MissionsPage state={state} />
     </AppShell>
   )
 }

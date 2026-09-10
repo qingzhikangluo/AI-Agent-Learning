@@ -1,11 +1,15 @@
 import { AppShell } from '@/components/app-shell'
 import { Dashboard } from '@/components/dashboard'
-import { playerState } from '@/lib/player-data'
+import { loadPlayerStateView } from '@/lib/server-data'
 
-export default function Home() {
+export const dynamic = 'force-dynamic'
+
+export default async function Home() {
+  const state = await loadPlayerStateView()
+
   return (
     <AppShell>
-      <Dashboard state={playerState} />
+      <Dashboard state={state} />
     </AppShell>
   )
 }

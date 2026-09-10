@@ -16,6 +16,8 @@ const moduleDir = dirname(fileURLToPath(import.meta.url))
 export const contentRoot = resolve(moduleDir, '..')
 export const missionsContentDir = join(contentRoot, 'missions')
 export const hintsContentDir = join(contentRoot, 'hints')
+export const bossesContentDir = join(contentRoot, 'bosses')
+export const transfersContentDir = join(contentRoot, 'transfers')
 
 async function collectContentFiles(dirPath: string): Promise<string[]> {
   const entries = await readdir(dirPath, { withFileTypes: true }).catch(
