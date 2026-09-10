@@ -417,7 +417,7 @@ export async function loadChallengeView(
     # 在这里实现你的 Agent 逻辑
     return user_message
 `
-        : '# 用中文写出你的判断与理由\n',
+        : '',
     status,
     locked: missionStatus === 'locked' || status === 'locked'
   }
@@ -439,7 +439,14 @@ export async function loadTransferView(
 
 export async function loadChallengeRuntime(
   challengeId: string
-): Promise<{ tests: TestCase[]; locked: boolean } | undefined> {
+): Promise<
+  | {
+      tests: TestCase[]
+      locked: boolean
+      type: 'concept' | 'code'
+    }
+  | undefined
+> {
   const content = await loadGameContent()
   const state = await loadState(content)
   const challenge = content.challenges.find(
@@ -470,7 +477,8 @@ export async function loadChallengeRuntime(
 
   return {
     tests: challenge.tests,
-    locked: missionStatus === 'locked' || status === 'locked'
+    locked: missionStatus === 'locked' || status === 'locked',
+    type: toViewType(challenge.type)
   }
 }
 

@@ -43,6 +43,18 @@ export async function POST(request: Request) {
     )
   }
 
+  if (challenge.type === 'concept') {
+    return NextResponse.json({
+      execution: {
+        exitCode: 0,
+        stdout: '',
+        stderr: '',
+        timedOut: false,
+        durationMs: 0
+      }
+    })
+  }
+
   const execution = await new PythonRuntime().execute({
     language: 'python',
     source,

@@ -29,9 +29,20 @@ async function main(): Promise<void> {
     const challengeFlagIndex = args.indexOf('--challenge')
     const challengeId =
       challengeFlagIndex >= 0 ? args[challengeFlagIndex + 1] : undefined
+    const skipped = new Set<number>()
+    if (challengeFlagIndex >= 0) {
+      skipped.add(challengeFlagIndex)
+      skipped.add(challengeFlagIndex + 1)
+    }
+    const output =
+      args
+        .filter((_, index) => !skipped.has(index))
+        .join(' ')
+        .trim() || undefined
     const result = await testWorkspace({
       workspaceDir: process.cwd(),
-      challengeId
+      challengeId,
+      output
     })
     console.log(result.passed ? 'PASS' : 'FAIL')
     console.log(`Challenge: ${result.challengeId} (${result.missionId})`)

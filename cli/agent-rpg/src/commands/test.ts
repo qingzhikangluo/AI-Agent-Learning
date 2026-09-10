@@ -7,6 +7,7 @@ import { createSeededPlayerState, loadGameContent } from './state'
 export interface TestOptions {
   workspaceDir: string
   challengeId?: string
+  output?: string
   timeoutMs?: number
 }
 
@@ -43,6 +44,7 @@ export async function testWorkspace(
     content,
     state,
     challengeId: options.challengeId,
+    output: options.output,
     timeoutMs: options.timeoutMs
   })
   const publicTests = run.resolved.challenge.tests.filter(

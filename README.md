@@ -62,8 +62,10 @@ agent-rpg submit --challenge <challenge-id> "<answer>"
 测试当前 Challenge（只判定，不改状态）：
 
 ```bash
-agent-rpg test --challenge <challenge-id>
+agent-rpg test --challenge <challenge-id> "<answer>"
 ```
+
+输出题可直接传入 `<answer>`；不传时执行 `agent.py` 的 `run_agent`。
 
 Boss 与 Transfer 同样通过 `--challenge` 提交：
 

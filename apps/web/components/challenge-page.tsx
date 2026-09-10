@@ -71,6 +71,16 @@ export function ChallengePage({
 
   async function handleRun() {
     if (locked || runPhase === 'running') return
+
+    if (challenge.type === 'concept') {
+      setRunPhase('done')
+      setTestPhase('idle')
+      setTestSummary(null)
+      setError(null)
+      setOutput(t('conceptRunHint'))
+      return
+    }
+
     setRunPhase('running')
     setTestPhase('idle')
     setTestSummary(null)
@@ -181,6 +191,11 @@ export function ChallengePage({
             aria-label={t('workspace')}
             disabled={locked}
             onChange={(event) => setCode(event.target.value)}
+            placeholder={
+              challenge.type === 'concept'
+                ? t('conceptAnswerPlaceholder')
+                : t('codeWorkspacePlaceholder')
+            }
             value={code}
           />
 
@@ -191,7 +206,9 @@ export function ChallengePage({
               disabled={locked || runPhase === 'running'}
               onClick={handleRun}
             >
-              {t('run')}
+              {challenge.type === 'concept'
+                ? t('checkAnswer')
+                : t('run')}
             </button>
             <button
               className="btn secondary"
