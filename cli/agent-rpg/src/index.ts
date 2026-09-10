@@ -62,18 +62,30 @@ async function main(): Promise<void> {
   if (command === 'submit') {
     const args = process.argv.slice(3)
     const challengeFlagIndex = args.indexOf('--challenge')
+    const answersFlagIndex = args.indexOf('--answers')
     const challengeId =
       challengeFlagIndex >= 0 ? args[challengeFlagIndex + 1] : undefined
-    const answerParts = args.filter(
-      (_, index) =>
-        index !== challengeFlagIndex &&
-        (challengeFlagIndex < 0 || index !== challengeFlagIndex + 1)
-    )
+    const skipped = new Set<number>()
+    for (const index of [challengeFlagIndex, answersFlagIndex]) {
+      if (index >= 0) {
+        skipped.add(index)
+        skipped.add(index + 1)
+      }
+    }
+    const answerParts = args.filter((_, index) => !skipped.has(index))
     const output = answerParts.join(' ').trim() || undefined
+    const explanationAnswers =
+      answersFlagIndex >= 0
+        ? (args[answersFlagIndex + 1] ?? '')
+            .split('|')
+            .map((answer) => answer.trim())
+            .filter(Boolean)
+        : undefined
     const result = await submitWorkspace({
       workspaceDir: process.cwd(),
       challengeId,
       output,
+      explanationAnswers,
       explanation: output
     })
     console.log(result.passed ? 'PASS' : 'FAIL')
@@ -90,6 +102,15 @@ async function main(): Promise<void> {
     }
     if (result.bossUnlocked) {
       console.log('Boss unlocked.')
+    }
+    if (result.bossPassed) {
+      console.log('Boss passed.')
+    }
+    if (result.transferUnlocked) {
+      console.log('Transfer unlocked.')
+    }
+    if (result.transferPassed) {
+      console.log('Transfer passed.')
     }
     console.log(`State: ${result.statePath}`)
     console.log(`Submission saved: ${result.submissionPath}`)

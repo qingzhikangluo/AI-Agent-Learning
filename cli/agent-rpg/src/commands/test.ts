@@ -68,7 +68,8 @@ export async function testWorkspace(
 
   return {
     challengeId: run.resolved.challenge.id,
-    missionId: run.resolved.mission.id,
+    missionId:
+      run.resolved.mission?.id ?? run.resolved.challenge.missionId,
     passed: run.evaluation.passed,
     score: run.evaluation.score,
     publicResults,

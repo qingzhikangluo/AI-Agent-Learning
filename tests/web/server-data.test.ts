@@ -3,10 +3,18 @@ import { tmpdir } from 'node:os'
 import { join } from 'node:path'
 
 import { FilePlayerStateStore } from '@ai-agent-rpg/progression'
+import {
+  ChallengeType,
+  SkillLevel,
+  type Evidence
+} from '@ai-agent-rpg/domain'
 import { afterEach, describe, expect, it } from 'vitest'
 
 import { createSeededPlayerState } from '../../cli/agent-rpg/src/commands/state'
-import { loadPlayerStateView } from '../../apps/web/lib/server-data'
+import {
+  loadAssessmentView,
+  loadPlayerStateView
+} from '../../apps/web/lib/server-data'
 
 const previousWorkspace = process.env.AGENT_RPG_WORKSPACE
 
@@ -82,6 +90,47 @@ describe('web server data', () => {
           (challenge) => challenge.id === 'api-request'
         )?.status
       ).toBe('active')
+    } finally {
+      await rm(workspaceDir, { recursive: true, force: true })
+    }
+  })
+
+  it('builds assessment dashboards from evidence', async () => {
+    const workspaceDir = await mkdtemp(join(tmpdir(), 'agent-rpg-web-'))
+    process.env.AGENT_RPG_WORKSPACE = workspaceDir
+
+    try {
+      const seeded = await createSeededPlayerState(
+        'player-001',
+        '2026-09-10T00:00:00.000Z'
+      )
+      const evidence: Evidence = {
+        id: 'evidence-001',
+        playerId: 'player-001',
+        skillId: 'agent.mental-model',
+        taskId: 'workflow-vs-agent',
+        taskType: ChallengeType.CONCEPT,
+        result: 'pass',
+        attempts: 1,
+        hintsUsed: 0,
+        failureCategories: [],
+        createdAt: '2026-09-10T00:00:00.000Z'
+      }
+      await new FilePlayerStateStore(workspaceDir).write({
+        ...seeded,
+        evidence: [evidence]
+      })
+
+      const skills = await loadAssessmentView()
+      const mentalModel = skills.find(
+        (skill) => skill.id === 'agent.mental-model'
+      )
+
+      expect(mentalModel?.level).toBe(SkillLevel.AWARENESS)
+      expect(mentalModel?.confidence).toBe(1)
+      expect(mentalModel?.strengths).toEqual([
+        'Passed workflow-vs-agent'
+      ])
     } finally {
       await rm(workspaceDir, { recursive: true, force: true })
     }

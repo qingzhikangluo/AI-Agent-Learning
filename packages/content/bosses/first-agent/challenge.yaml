@@ -11,6 +11,19 @@ objectives:
   - 能生成合法工具参数。
   - 能在工具失败后恢复。
   - 不需要工具时直接回答。
+explanationRubric:
+  - id: tool-selection
+    question: 你如何选择正确的工具？
+    expectedAnswers:
+      - 读取工具描述并匹配用户意图
+  - id: argument-validation
+    question: 你如何保证工具参数合法？
+    expectedAnswers:
+      - 校验必填参数和类型
+  - id: error-recovery
+    question: 工具失败后你如何处理？
+    expectedAnswers:
+      - 把错误反馈给模型并限制重试
 tests:
   - id: boss-public-weather
     name: Normal Weather

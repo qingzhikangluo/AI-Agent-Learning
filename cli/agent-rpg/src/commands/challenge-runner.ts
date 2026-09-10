@@ -20,7 +20,24 @@ import type { GameContent } from './state'
 
 export interface ResolvedChallenge {
   challenge: Challenge
+  kind: 'mission' | 'boss' | 'transfer'
+  mission?: Mission
+  missionChallenges?: Challenge[]
+  skillTargets: string[]
+}
+
+function resolveMissionChallenge(
+  content: GameContent,
+  challenge: Challenge,
   mission: Mission
+): ResolvedChallenge {
+  return {
+    challenge,
+    kind: 'mission',
+    mission,
+    missionChallenges: content.challengesByMission[mission.id] ?? [],
+    skillTargets: mission.skillTargets
+  }
 }
 
 export function resolveChallenge(
@@ -29,6 +46,37 @@ export function resolveChallenge(
   challengeId?: string
 ): ResolvedChallenge {
   if (challengeId) {
+    if (content.boss?.id === challengeId) {
+      if (state.boss.status === 'locked') {
+        throw new Error(`Boss ${challengeId} is locked.`)
+      }
+      const mission = content.missions.find(
+        (item) => item.id === content.boss?.missionId
+      )
+
+      return {
+        challenge: content.boss,
+        kind: 'boss',
+        mission,
+        skillTargets: mission?.skillTargets ?? [
+          'agent.loop',
+          'agent.error-recovery'
+        ]
+      }
+    }
+
+    if (content.transfer?.id === challengeId) {
+      if (state.transfer.status === 'locked') {
+        throw new Error(`Transfer ${challengeId} is locked.`)
+      }
+
+      return {
+        challenge: content.transfer,
+        kind: 'transfer',
+        skillTargets: ['tool.calling']
+      }
+    }
+
     const challenge = content.challenges.find(
       (item) => item.id === challengeId
     )
@@ -51,7 +99,7 @@ export function resolveChallenge(
       throw new Error(`Challenge ${challengeId} is locked.`)
     }
 
-    return { challenge, mission }
+    return resolveMissionChallenge(content, challenge, mission)
   }
 
   const mission =
@@ -77,7 +125,7 @@ export function resolveChallenge(
     throw new Error(`No unlocked challenge in ${mission.id}.`)
   }
 
-  return { challenge: active.challenge, mission }
+  return resolveMissionChallenge(content, active.challenge, mission)
 }
 
 export interface ChallengeRunOptions {

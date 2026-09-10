@@ -1,9 +1,11 @@
 import { join } from 'node:path'
 
 import {
+  bossesContentDir,
   loadChallenges,
   loadMissions,
-  missionsContentDir
+  missionsContentDir,
+  transfersContentDir
 } from '@ai-agent-rpg/content'
 import type { Challenge, Mission } from '@ai-agent-rpg/domain'
 import {
@@ -18,6 +20,8 @@ export interface GameContent {
   missions: Mission[]
   challenges: Challenge[]
   challengesByMission: Record<string, Challenge[]>
+  boss?: Challenge
+  transfer?: Challenge
 }
 
 export async function loadGameContent(): Promise<GameContent> {
@@ -40,7 +44,16 @@ export async function loadGameContent(): Promise<GameContent> {
     challenges.push(...ordered)
   }
 
-  return { missions, challenges, challengesByMission }
+  const bosses = await loadChallenges(bossesContentDir)
+  const transfers = await loadChallenges(transfersContentDir)
+
+  return {
+    missions,
+    challenges,
+    challengesByMission,
+    boss: bosses[0],
+    transfer: transfers[0]
+  }
 }
 
 export async function createSeededPlayerState(

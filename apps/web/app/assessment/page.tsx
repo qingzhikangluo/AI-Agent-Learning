@@ -1,10 +1,15 @@
 import { AppShell } from '@/components/app-shell'
 import { AssessmentPage } from '@/components/assessment-page'
+import { loadAssessmentView } from '@/lib/server-data'
 
-export default function AssessmentRoute() {
+export const dynamic = 'force-dynamic'
+
+export default async function AssessmentRoute() {
+  const skills = await loadAssessmentView()
+
   return (
     <AppShell>
-      <AssessmentPage />
+      <AssessmentPage skills={skills} />
     </AppShell>
   )
 }

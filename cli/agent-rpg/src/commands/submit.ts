@@ -4,13 +4,15 @@ import { join } from 'node:path'
 import type {
   AgentTrace,
   Attempt,
+  Challenge,
   EvaluationResult,
   Evidence,
   FailureCategory,
-  HintUsage,
-  Mission
+  HintUsage
 } from '@ai-agent-rpg/domain'
 import {
+  scoreBoss,
+  scoreStructuredAnswers,
   type ErrorHandlingSubmission,
   type ToolCall
 } from '@ai-agent-rpg/evaluator'
@@ -34,6 +36,44 @@ import {
   type ResolvedChallenge
 } from './challenge-runner'
 
+const BOSS_PASS_THRESHOLD = 0.8
+
+function applyBossScore(
+  challenge: Challenge,
+  options: SubmitOptions,
+  evaluation: EvaluationResult
+): EvaluationResult {
+  const rubric = challenge.explanationRubric ?? []
+  const answers = options.explanationAnswers ?? []
+  const explanationAnswerScores = rubric.map((item, index) =>
+    scoreStructuredAnswers(item.expectedAnswers, [
+      answers[index] ?? ''
+    ].filter(Boolean))
+  )
+  const bossScore = scoreBoss({
+    deterministicScore: evaluation.score,
+    explanationAnswerScores
+  })
+  const passed =
+    evaluation.passed && bossScore.total >= BOSS_PASS_THRESHOLD
+
+  return {
+    ...evaluation,
+    passed,
+    score: bossScore.total,
+    feedback: [
+      ...evaluation.feedback,
+      `Deterministic score: ${Math.round(
+        bossScore.deterministicScore * 100
+      )}%`,
+      `Explanation score: ${Math.round(
+        bossScore.explanationScore * 100
+      )}%`,
+      `Total score: ${Math.round(bossScore.total * 100)}%`
+    ]
+  }
+}
+
 export interface SubmitOptions {
   workspaceDir: string
   challengeId?: string
@@ -41,6 +81,7 @@ export interface SubmitOptions {
   toolCalls?: ToolCall[]
   errorHandling?: ErrorHandlingSubmission
   traces?: AgentTrace[]
+  explanationAnswers?: string[]
   hintUsages?: HintUsage[]
   explanation?: string
   submittedAt?: string
@@ -59,6 +100,9 @@ export interface SubmitResult {
   unlockedChallengeId?: string
   unlockedMissionId?: string
   bossUnlocked: boolean
+  bossPassed: boolean
+  transferUnlocked: boolean
+  transferPassed: boolean
 }
 
 function upsertSkill(
@@ -77,14 +121,14 @@ function upsertSkill(
 
 function updateSkillStates(
   state: PlayerState,
-  mission: Mission,
+  skillTargets: string[],
   newEvidence: Evidence[],
   updatedAt: string
 ): PlayerSkillState[] {
   const allEvidence = [...state.evidence, ...newEvidence]
   let skills = [...state.skills]
 
-  for (const skillId of mission.skillTargets) {
+  for (const skillId of skillTargets) {
     const relevant = allEvidence.filter(
       (evidence) => evidence.skillId === skillId
     )
@@ -119,6 +163,9 @@ interface AppliedSubmission {
   unlockedChallengeId?: string
   unlockedMissionId?: string
   bossUnlocked: boolean
+  bossPassed: boolean
+  transferUnlocked: boolean
+  transferPassed: boolean
 }
 
 function applySubmission(params: {
@@ -143,21 +190,22 @@ function applySubmission(params: {
     explanation,
     submittedAt
   } = params
-  const { challenge, mission } = resolved
-  const challengeState = state.challenges.find(
-    (item) => item.id === challenge.id
-  )
+  const { challenge, mission, kind } = resolved
+  const challengeState =
+    kind === 'mission'
+      ? state.challenges.find((item) => item.id === challenge.id)
+      : undefined
 
-  if (!challengeState) {
+  if (kind === 'mission' && !challengeState) {
     throw new Error(
       `Challenge ${challenge.id} is not part of the current player state.`
     )
   }
 
-  const attemptNumber = challengeState.attempts + 1
-  const hintsUsed = challengeState.hintsUsed + hintUsages.length
+  const attemptNumber = (challengeState?.attempts ?? 0) + 1
+  const hintsUsed = (challengeState?.hintsUsed ?? 0) + hintUsages.length
   const result = evaluation.passed ? 'pass' : 'fail'
-  const newEvidence: Evidence[] = mission.skillTargets.map((skillId) => ({
+  const newEvidence: Evidence[] = resolved.skillTargets.map((skillId) => ({
     id: `evidence-${challenge.id}-${skillId}-${attemptNumber}`,
     playerId: state.playerId,
     skillId,
@@ -195,10 +243,13 @@ function applySubmission(params: {
   let missions = state.missions
   let currentMissionId = state.currentMissionId
   let bossUnlocked = false
+  let bossPassed = false
+  let transferUnlocked = false
+  let transferPassed = false
   let unlockedChallengeId: string | undefined
   let unlockedMissionId: string | undefined
 
-  if (evaluation.passed) {
+  if (evaluation.passed && kind === 'mission' && mission) {
     const missionChallenges = content.challengesByMission[mission.id] ?? []
     const position = missionChallenges.findIndex(
       (item) => item.id === challenge.id
@@ -265,6 +316,17 @@ function applySubmission(params: {
     }
   }
 
+  if (kind === 'boss') {
+    if (evaluation.passed) {
+      bossPassed = true
+      transferUnlocked = state.transfer.status === 'locked'
+    }
+  }
+
+  if (kind === 'transfer') {
+    transferPassed = evaluation.passed
+  }
+
   const submissionRecord: SubmissionRecord = {
     id: submissionId,
     challengeId: challenge.id,
@@ -278,12 +340,13 @@ function applySubmission(params: {
   const nextState: PlayerState = {
     ...state,
     updatedAt: submittedAt,
-    currentMissionId,
-    missions,
-    challenges,
+    currentMissionId:
+      kind === 'mission' ? currentMissionId : state.currentMissionId,
+    missions: kind === 'mission' ? missions : state.missions,
+    challenges: kind === 'mission' ? challenges : state.challenges,
     skills: updateSkillStates(
       state,
-      mission,
+      resolved.skillTargets,
       newEvidence,
       submittedAt
     ),
@@ -292,9 +355,23 @@ function applySubmission(params: {
     hintUsages: [...state.hintUsages, ...hintUsages],
     submissions: [...state.submissions, submissionRecord],
     boss:
-      bossUnlocked && state.boss.status === 'locked'
-        ? { ...state.boss, status: 'in-progress' }
-        : state.boss
+      kind === 'boss'
+        ? {
+            ...state.boss,
+            status: evaluation.passed ? 'passed' : 'in-progress'
+          }
+        : bossUnlocked && state.boss.status === 'locked'
+          ? { ...state.boss, status: 'in-progress' }
+          : state.boss,
+    transfer:
+      kind === 'transfer'
+        ? {
+            ...state.transfer,
+            status: evaluation.passed ? 'passed' : 'in-progress'
+          }
+        : transferUnlocked && state.transfer.status === 'locked'
+          ? { ...state.transfer, status: 'in-progress' }
+          : state.transfer
   }
 
   return {
@@ -302,7 +379,10 @@ function applySubmission(params: {
     submissionRecord,
     unlockedChallengeId,
     unlockedMissionId,
-    bossUnlocked
+    bossUnlocked,
+    bossPassed,
+    transferUnlocked,
+    transferPassed
   }
 }
 
@@ -334,6 +414,10 @@ export async function submitWorkspace(
     state
   })
   const { resolved, evaluation, traces, traceExecution } = run
+  const effectiveEvaluation =
+    resolved.challenge.type === 'boss'
+      ? applyBossScore(resolved.challenge, options, evaluation)
+      : evaluation
   let applied: AppliedSubmission | undefined
 
   await store.update((current) => {
@@ -347,11 +431,19 @@ export async function submitWorkspace(
       options,
       traces
     )
+    const currentEffectiveEvaluation =
+      currentResolved.challenge.type === 'boss'
+        ? applyBossScore(
+            currentResolved.challenge,
+            options,
+            currentEvaluation
+          )
+        : currentEvaluation
     applied = applySubmission({
       state: current,
       content,
       resolved: currentResolved,
-      evaluation: currentEvaluation,
+      evaluation: currentEffectiveEvaluation,
       submissionId,
       submissionPath,
       hintUsages: options.hintUsages ?? [],
@@ -377,7 +469,7 @@ export async function submitWorkspace(
   const artifact = {
     submissionId,
     challengeId: resolved.challenge.id,
-    missionId: resolved.mission.id,
+    missionId: resolved.mission?.id ?? resolved.challenge.missionId,
     output: options.output ?? '',
     traces: traces ?? [],
     toolCalls: options.toolCalls ?? [],
@@ -386,11 +478,11 @@ export async function submitWorkspace(
     explanation: options.explanation ?? '',
     submittedAt,
     evaluation: {
-      passed: evaluation.passed,
-      score: evaluation.score,
-      failureCategories: evaluation.failureCategories,
-      feedback: evaluation.feedback,
-      testResults: evaluation.testResults
+      passed: effectiveEvaluation.passed,
+      score: effectiveEvaluation.score,
+      failureCategories: effectiveEvaluation.failureCategories,
+      feedback: effectiveEvaluation.feedback,
+      testResults: effectiveEvaluation.testResults
     },
     runtime: traceExecution
       ? {
@@ -417,13 +509,16 @@ export async function submitWorkspace(
     submissionPath,
     statePath: store.filePath,
     challengeId: resolved.challenge.id,
-    missionId: resolved.mission.id,
-    passed: evaluation.passed,
-    score: evaluation.score,
-    failureCategories: evaluation.failureCategories,
-    feedback: evaluation.feedback,
+    missionId: resolved.mission?.id ?? resolved.challenge.missionId,
+    passed: effectiveEvaluation.passed,
+    score: effectiveEvaluation.score,
+    failureCategories: effectiveEvaluation.failureCategories,
+    feedback: effectiveEvaluation.feedback,
     unlockedChallengeId: applied.unlockedChallengeId,
     unlockedMissionId: applied.unlockedMissionId,
-    bossUnlocked: applied.bossUnlocked
+    bossUnlocked: applied.bossUnlocked,
+    bossPassed: applied.bossPassed,
+    transferUnlocked: applied.transferUnlocked,
+    transferPassed: applied.transferPassed
   }
 }

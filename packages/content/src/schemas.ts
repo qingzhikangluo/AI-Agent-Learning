@@ -37,6 +37,12 @@ export const hintSchema = z.object({
 
 export const hintListSchema = z.array(hintSchema)
 
+export const explanationRubricItemSchema = z.object({
+  id: z.string().min(1),
+  question: z.string().min(1),
+  expectedAnswers: z.array(z.string().min(1)).min(1)
+})
+
 export const challengeSchema = z.object({
   id: z.string().min(1),
   missionId: z.string().min(1),
@@ -44,7 +50,8 @@ export const challengeSchema = z.object({
   title: z.string().min(1),
   description: z.string().min(1),
   objectives: z.array(z.string().min(1)),
-  tests: z.array(testCaseSchema)
+  tests: z.array(testCaseSchema),
+  explanationRubric: z.array(explanationRubricItemSchema).optional()
 })
 
 export const missionSchema = z.object({

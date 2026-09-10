@@ -1,6 +1,7 @@
 export type { Player } from './player'
 export type { BossSubmission } from './submission'
 export type { Challenge } from './challenge'
+export type { ExplanationRubricItem } from './challenge'
 export type {
   AgentErrorHandling,
   AgentToolCall,

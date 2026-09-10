@@ -12,11 +12,13 @@ import {
   type TestCase
 } from '@ai-agent-rpg/domain'
 import {
+  buildSkillDashboard,
   createPlayerStateFromMissionSeeds,
   FilePlayerStateStore,
   type MissionSeed,
   type PlayerState as StoredPlayerState
 } from '@ai-agent-rpg/progression'
+import type { Skill } from '@ai-agent-rpg/domain'
 
 import type {
   BossSummary,
@@ -470,6 +472,37 @@ export async function loadChallengeRuntime(
     tests: challenge.tests,
     locked: missionStatus === 'locked' || status === 'locked'
   }
+}
+
+export async function loadAssessmentView(): Promise<
+  PlayerState['skills']
+> {
+  const content = await loadGameContent()
+  const state = await loadState(content)
+  const skillIds = [
+    ...new Set([
+      ...content.missions.flatMap((mission) => mission.skillTargets),
+      ...state.skills.map((skill) => skill.skillId)
+    ])
+  ].sort()
+
+  return skillIds.map((skillId) => {
+    const skill: Skill = {
+      id: skillId,
+      name: skillId,
+      description: '',
+      maxLevel: 5
+    }
+    const dashboard = buildSkillDashboard(skill, state.evidence)
+
+    return {
+      id: skillId,
+      level: dashboard.level,
+      confidence: dashboard.confidence,
+      strengths: dashboard.strengths,
+      weaknesses: dashboard.weaknesses
+    }
+  })
 }
 
 export async function listMissionIds(): Promise<string[]> {

@@ -14,6 +14,7 @@ export {
 } from './load-content'
 export {
   challengeSchema,
+  explanationRubricItemSchema,
   hintListSchema,
   hintSchema,
   learningBlockSchema,

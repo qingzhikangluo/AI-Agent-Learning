@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 Web UI 完成；EPIC 12 — 垂直切片闭合（P0/P1 完成；P2 进行中）**。
+当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 Web UI 完成；EPIC 12 — 垂直切片闭合（P0/P1/P2 完成）**。
 
 ## Repository Structure
 
@@ -63,6 +63,13 @@ agent-rpg submit --challenge <challenge-id> "<answer>"
 
 ```bash
 agent-rpg test --challenge <challenge-id>
+```
+
+Boss 与 Transfer 同样通过 `--challenge` 提交：
+
+```bash
+agent-rpg submit --challenge first-agent-boss --answers "答案1|答案2|答案3"
+agent-rpg submit --challenge travel-expense-transfer
 ```
 
 `submit` 会为每个测试用例执行一次玩家 `agent.py`。玩家代码实现

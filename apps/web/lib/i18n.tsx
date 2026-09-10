@@ -113,6 +113,7 @@ const zh = {
 
   assessmentTitle: '能力诊断',
   assessmentSub: '完成最小能力诊断，系统会给出推荐起点。',
+  skillDashboard: '技能面板',
   abilityStatus: '能力状态',
   ability: '能力',
   status: '状态',
@@ -233,6 +234,7 @@ const en: Record<keyof typeof zh, string> = {
   assessmentTitle: 'Assessment',
   assessmentSub:
     'Complete a minimal capability diagnosis to receive a recommended starting point.',
+  skillDashboard: 'Skill Dashboard',
   abilityStatus: 'Ability Status',
   ability: 'Ability',
   status: 'Status',
