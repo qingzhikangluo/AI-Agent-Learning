@@ -15,5 +15,7 @@ tests:
       tool_result: "晴"
     expectedBehavior:
       type: contains
-      value: "晴"
+      value:
+        zh: "晴"
+        en: "sunny"
     failureCategory: agent_loop

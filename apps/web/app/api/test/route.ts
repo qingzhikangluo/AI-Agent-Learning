@@ -70,9 +70,10 @@ export async function POST(request: Request) {
     )
   }
 
-  const { challengeId, source } = (body ?? {}) as {
+  const { challengeId, source, language } = (body ?? {}) as {
     challengeId?: unknown
     source?: unknown
+    language?: unknown
   }
 
   if (typeof challengeId !== 'string' || typeof source !== 'string') {
@@ -99,7 +100,8 @@ export async function POST(request: Request) {
   if (challenge.type === 'concept') {
     const evaluation = evaluateTestCases(
       challenge.tests,
-      () => ({ output: source })
+      () => ({ output: source }),
+      { language: language === 'en' ? 'en' : 'zh' }
     )
 
     return buildResponse(challenge.tests, evaluation, null)
@@ -111,7 +113,8 @@ export async function POST(request: Request) {
   )
   const evaluation = evaluateTestCases(
     challenge.tests,
-    (_, index) => submissionFromTrace(traceExecution.traces[index])
+    (_, index) => submissionFromTrace(traceExecution.traces[index]),
+    { language: language === 'en' ? 'en' : 'zh' }
   )
 
   return buildResponse(challenge.tests, evaluation, {

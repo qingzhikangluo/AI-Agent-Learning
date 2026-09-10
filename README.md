@@ -79,6 +79,8 @@ agent-rpg submit --challenge travel-expense-transfer
 由 evaluator 做确定性判定；仅在显式传入 `<answer>` 时，输出题使用该文本。
 Web 的 Challenge 页通过 `/api/run` 与 `/api/test` 在服务端真实执行同一份代码；
 隐藏测试只返回聚合结果，不显示名称、输入或反馈。
+答案题按当前界面语言判定：中文界面使用 `value.zh`，English 界面使用 `value.en`
+（英文匹配不区分大小写）。
 
 TASK-001 阶段使用 Node.js 内置能力作为最小可运行基线：
 

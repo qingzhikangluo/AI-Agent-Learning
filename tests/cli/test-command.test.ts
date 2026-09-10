@@ -80,4 +80,28 @@ describe('agent-rpg test', () => {
     },
     20_000
   )
+
+  it(
+    'evaluates English answers when language is en',
+    async () => {
+      const workspaceDir = await mkdtemp(join(tmpdir(), 'agent-rpg-test-'))
+
+      try {
+        await initWorkspace({ workspaceDir })
+
+        const result = await testWorkspace({
+          workspaceDir,
+          challengeId: 'workflow-vs-agent',
+          output:
+            "An agent decides which tool to call based on the user's question",
+          language: 'en'
+        })
+
+        expect(result.passed).toBe(true)
+      } finally {
+        await rm(workspaceDir, { recursive: true, force: true })
+      }
+    },
+    20_000
+  )
 })

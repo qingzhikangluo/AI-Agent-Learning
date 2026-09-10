@@ -53,8 +53,6 @@ interface LoadedGameContent {
   transfer?: Challenge
 }
 
-let contentPromise: Promise<LoadedGameContent> | undefined
-
 function findRepositoryRoot(startDir: string): string {
   let current = startDir
 
@@ -121,8 +119,7 @@ async function loadGameContentUncached(): Promise<LoadedGameContent> {
 }
 
 export function loadGameContent(): Promise<LoadedGameContent> {
-  contentPromise ??= loadGameContentUncached()
-  return contentPromise
+  return loadGameContentUncached()
 }
 
 function missionSeeds(content: LoadedGameContent): MissionSeed[] {

@@ -10,7 +10,10 @@ import {
   evaluateErrorHandling,
   type ErrorHandlingSubmission
 } from './error-handling'
-import { evaluateOutput } from './output'
+import {
+  evaluateOutput,
+  type EvaluationOptions
+} from './output'
 import { evaluateToolCalls, type ToolCall } from './tool-call'
 import { evaluateToolSequences } from './tool-sequence'
 
@@ -33,14 +36,19 @@ export function submissionFromTrace(
 
 export function evaluateTestCase(
   test: TestCase,
-  submission: ChallengeSubmission
+  submission: ChallengeSubmission,
+  options: EvaluationOptions = {}
 ): TestResult {
   const behavior = test.expectedBehavior.type
 
   if (behavior === 'exact' || behavior === 'contains') {
-    return evaluateOutput([test], {
-      output: submission.output ?? ''
-    }).testResults[0]
+    return evaluateOutput(
+      [test],
+      {
+        output: submission.output ?? ''
+      },
+      options
+    ).testResults[0]
   }
 
   if (behavior === 'tool_called' || behavior === 'tool_not_called') {
@@ -69,11 +77,12 @@ export function evaluateTestCases(
   submissionForTest: (
     test: TestCase,
     index: number
-  ) => ChallengeSubmission
+  ) => ChallengeSubmission,
+  options: EvaluationOptions = {}
 ): EvaluationResult {
   return aggregateTestResults(
     tests.map((test, index) =>
-      evaluateTestCase(test, submissionForTest(test, index))
+      evaluateTestCase(test, submissionForTest(test, index), options)
     )
   )
 }

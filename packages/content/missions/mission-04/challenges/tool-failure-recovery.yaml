@@ -15,5 +15,7 @@ tests:
       tool_error: "missing required field: city"
     expectedBehavior:
       type: contains
-      value: "补充参数"
+      value:
+        zh: "补充参数"
+        en: "missing parameter"
     failureCategory: error_handling

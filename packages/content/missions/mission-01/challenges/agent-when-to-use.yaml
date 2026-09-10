@@ -14,7 +14,9 @@ tests:
       scenario: "每次都需要调用同一个 API，并按固定格式保存结果。"
     expectedBehavior:
       type: contains
-      value: "固定流程"
+      value:
+        zh: "固定流程"
+        en: "workflow"
   - id: agent-when-to-use-002
     name: 不确定任务选 Agent
     visibility: public
@@ -22,4 +24,6 @@ tests:
       scenario: "用户问题可能涉及多个不同工具，需要先判断再调用。"
     expectedBehavior:
       type: contains
-      value: "Agent"
+      value:
+        zh: "Agent"
+        en: "agent"

@@ -7,6 +7,7 @@ import type {
 import {
   evaluateTestCases,
   submissionFromTrace,
+  type EvaluationLanguage,
   type ErrorHandlingSubmission,
   type ToolCall
 } from '@ai-agent-rpg/evaluator'
@@ -137,6 +138,7 @@ export interface ChallengeRunOptions {
   toolCalls?: ToolCall[]
   errorHandling?: ErrorHandlingSubmission
   traces?: AgentTrace[]
+  language?: EvaluationLanguage
   timeoutMs?: number
 }
 
@@ -145,12 +147,15 @@ export function evaluateChallenge(
   options: Omit<ChallengeRunOptions, 'content' | 'state' | 'workspaceDir'>,
   traces?: AgentTrace[]
 ): EvaluationResult {
-  return evaluateTestCases(challenge.tests, (_, index) =>
-    submissionFromTrace(traces?.[index], {
-      output: options.output,
-      toolCalls: options.toolCalls,
-      errorHandling: options.errorHandling
-    })
+  return evaluateTestCases(
+    challenge.tests,
+    (_, index) =>
+      submissionFromTrace(traces?.[index], {
+        output: options.output,
+        toolCalls: options.toolCalls,
+        errorHandling: options.errorHandling
+      }),
+    { language: options.language }
   )
 }
 

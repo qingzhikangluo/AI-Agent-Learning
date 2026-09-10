@@ -31,5 +31,12 @@ describe('mission-01 content', () => {
     expect(new Set(challenges.map((challenge) => challenge.id))).toEqual(
       new Set(['workflow-vs-agent', 'agent-components', 'agent-when-to-use'])
     )
+    const workflow = challenges.find(
+      (challenge) => challenge.id === 'workflow-vs-agent'
+    )
+    expect(workflow?.tests[0]?.expectedBehavior.value).toEqual({
+      zh: '根据用户问题自行决定调用哪个工具',
+      en: "decides which tool to call based on the user's question"
+    })
   })
 })

@@ -2,6 +2,8 @@ export {
   UnsupportedBehaviorError,
   evaluateOutput,
   evaluateOutputTestCase,
+  type EvaluationLanguage,
+  type EvaluationOptions,
   type TextSubmission
 } from './output'
 export {

@@ -1,4 +1,5 @@
 import type { FailureCategory } from '@ai-agent-rpg/domain'
+import type { EvaluationLanguage } from '@ai-agent-rpg/evaluator'
 import { FilePlayerStateStore } from '@ai-agent-rpg/progression'
 
 import { runChallenge } from './challenge-runner'
@@ -8,6 +9,7 @@ export interface TestOptions {
   workspaceDir: string
   challengeId?: string
   output?: string
+  language?: EvaluationLanguage
   timeoutMs?: number
 }
 
@@ -45,6 +47,7 @@ export async function testWorkspace(
     state,
     challengeId: options.challengeId,
     output: options.output,
+    language: options.language,
     timeoutMs: options.timeoutMs
   })
   const publicTests = run.resolved.challenge.tests.filter(

@@ -13,4 +13,6 @@ tests:
       question: "一个最小 Agent 至少需要哪些部分？"
     expectedBehavior:
       type: contains
-      value: "模型"
+      value:
+        zh: "模型"
+        en: "model"

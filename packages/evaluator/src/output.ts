@@ -9,9 +9,33 @@ export interface TextSubmission {
   output: string
 }
 
+export type EvaluationLanguage = 'zh' | 'en'
+
+export interface EvaluationOptions {
+  language?: EvaluationLanguage
+}
+
 export class UnsupportedBehaviorError extends Error {}
 
-function expectedString(testCase: TestCase, value: unknown): string {
+function isLocalizedValue(
+  value: unknown
+): value is { zh: string; en: string } {
+  return (
+    typeof value === 'object' &&
+    value !== null &&
+    typeof (value as { zh?: unknown }).zh === 'string' &&
+    typeof (value as { en?: unknown }).en === 'string'
+  )
+}
+
+function expectedString(
+  testCase: TestCase,
+  value: unknown,
+  language: EvaluationLanguage
+): string {
+  if (isLocalizedValue(value)) {
+    return value[language]
+  }
   if (typeof value !== 'string') {
     throw new UnsupportedBehaviorError(
       `${testCase.id} requires a string value for ${testCase.expectedBehavior.type}`
@@ -22,13 +46,19 @@ function expectedString(testCase: TestCase, value: unknown): string {
 
 export function evaluateOutputTestCase(
   testCase: TestCase,
-  submission: TextSubmission
+  submission: TextSubmission,
+  options: EvaluationOptions = {}
 ): TestResult {
   const { type, value } = testCase.expectedBehavior
   const output = submission.output.trim()
+  const language = options.language ?? 'zh'
 
   if (type === 'exact') {
-    const passed = output === expectedString(testCase, value)
+    const expected = expectedString(testCase, value, language)
+    const passed =
+      language === 'en'
+        ? output.toLowerCase() === expected.toLowerCase()
+        : output === expected
     return {
       testId: testCase.id,
       passed,
@@ -38,7 +68,11 @@ export function evaluateOutputTestCase(
   }
 
   if (type === 'contains') {
-    const passed = output.includes(expectedString(testCase, value))
+    const expected = expectedString(testCase, value, language)
+    const passed =
+      language === 'en'
+        ? output.toLowerCase().includes(expected.toLowerCase())
+        : output.includes(expected)
     const message = passed
       ? 'Output contains expected text.'
       : 'Expected text was not found in output.'
@@ -57,10 +91,11 @@ export function evaluateOutputTestCase(
 
 export function evaluateOutput(
   testCases: TestCase[],
-  submission: TextSubmission
+  submission: TextSubmission,
+  options: EvaluationOptions = {}
 ): EvaluationResult {
   const testResults = testCases.map((testCase) =>
-    evaluateOutputTestCase(testCase, submission)
+    evaluateOutputTestCase(testCase, submission, options)
   )
   const passedCount = testResults.filter((result) => result.passed).length
   const failedResults = testResults.filter((result) => !result.passed)

@@ -27,12 +27,15 @@ async function main(): Promise<void> {
   if (command === 'test') {
     const args = process.argv.slice(3)
     const challengeFlagIndex = args.indexOf('--challenge')
+    const langFlagIndex = args.indexOf('--lang')
     const challengeId =
       challengeFlagIndex >= 0 ? args[challengeFlagIndex + 1] : undefined
     const skipped = new Set<number>()
-    if (challengeFlagIndex >= 0) {
-      skipped.add(challengeFlagIndex)
-      skipped.add(challengeFlagIndex + 1)
+    for (const index of [challengeFlagIndex, langFlagIndex]) {
+      if (index >= 0) {
+        skipped.add(index)
+        skipped.add(index + 1)
+      }
     }
     const output =
       args
@@ -42,7 +45,11 @@ async function main(): Promise<void> {
     const result = await testWorkspace({
       workspaceDir: process.cwd(),
       challengeId,
-      output
+      output,
+      language:
+        langFlagIndex >= 0 && args[langFlagIndex + 1] === 'en'
+          ? 'en'
+          : undefined
     })
     console.log(result.passed ? 'PASS' : 'FAIL')
     console.log(`Challenge: ${result.challengeId} (${result.missionId})`)
@@ -74,10 +81,11 @@ async function main(): Promise<void> {
     const args = process.argv.slice(3)
     const challengeFlagIndex = args.indexOf('--challenge')
     const answersFlagIndex = args.indexOf('--answers')
+    const langFlagIndex = args.indexOf('--lang')
     const challengeId =
       challengeFlagIndex >= 0 ? args[challengeFlagIndex + 1] : undefined
     const skipped = new Set<number>()
-    for (const index of [challengeFlagIndex, answersFlagIndex]) {
+    for (const index of [challengeFlagIndex, answersFlagIndex, langFlagIndex]) {
       if (index >= 0) {
         skipped.add(index)
         skipped.add(index + 1)
@@ -92,11 +100,16 @@ async function main(): Promise<void> {
             .map((answer) => answer.trim())
             .filter(Boolean)
         : undefined
+    const language =
+      langFlagIndex >= 0 && args[langFlagIndex + 1] === 'en'
+        ? 'en'
+        : undefined
     const result = await submitWorkspace({
       workspaceDir: process.cwd(),
       challengeId,
       output,
       explanationAnswers,
+      language,
       explanation: output
     })
     console.log(result.passed ? 'PASS' : 'FAIL')

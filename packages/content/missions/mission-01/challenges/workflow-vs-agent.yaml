@@ -16,4 +16,6 @@ tests:
         - 根据用户问题自行决定调用哪个工具
     expectedBehavior:
       type: contains
-      value: "根据用户问题自行决定调用哪个工具"
+      value:
+        zh: "根据用户问题自行决定调用哪个工具"
+        en: "decides which tool to call based on the user's question"

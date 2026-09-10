@@ -15,5 +15,7 @@ tests:
       error: "timeout"
     expectedBehavior:
       type: contains
-      value: "超时"
+      value:
+        zh: "超时"
+        en: "timeout"
     failureCategory: api

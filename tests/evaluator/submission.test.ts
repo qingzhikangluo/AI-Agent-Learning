@@ -56,4 +56,39 @@ describe('evaluateTestCases', () => {
 
     expect(submission.output).toBe('from answer')
   })
+
+  it('evaluates localized expectations for the selected language', () => {
+    const tests: TestCase[] = [
+      {
+        id: 'agent-when-to-use-001',
+        name: '固定任务选 Workflow',
+        visibility: 'public',
+        input: {},
+        expectedBehavior: {
+          type: 'contains',
+          value: { zh: '固定流程', en: 'workflow' }
+        }
+      }
+    ]
+
+    const english = evaluateTestCases(
+      tests,
+      () => ({ output: 'Use Workflow for fixed paths.' }),
+      { language: 'en' }
+    )
+    const chinese = evaluateTestCases(
+      tests,
+      () => ({ output: '固定流程用 Workflow' }),
+      { language: 'zh' }
+    )
+    const wrongLanguage = evaluateTestCases(
+      tests,
+      () => ({ output: 'Workflow' }),
+      { language: 'zh' }
+    )
+
+    expect(english.passed).toBe(true)
+    expect(chinese.passed).toBe(true)
+    expect(wrongLanguage.passed).toBe(false)
+  })
 })

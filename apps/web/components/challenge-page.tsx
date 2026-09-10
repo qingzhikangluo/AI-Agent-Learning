@@ -55,7 +55,7 @@ export function ChallengePage({
   status: ChallengeStatus
   locked: boolean
 }) {
-  const { t } = useLanguage()
+  const { language, t } = useLanguage()
   const [code, setCode] = useState(challenge.workspace)
   const [runPhase, setRunPhase] = useState<'idle' | 'running' | 'done'>(
     'idle'
@@ -91,7 +91,11 @@ export function ChallengePage({
       const response = await fetch('/api/run', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ challengeId: challenge.id, source: code })
+        body: JSON.stringify({
+          challengeId: challenge.id,
+          source: code,
+          language
+        })
       })
       const data = (await response.json()) as {
         error?: string
@@ -122,7 +126,11 @@ export function ChallengePage({
       const response = await fetch('/api/test', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ challengeId: challenge.id, source: code })
+        body: JSON.stringify({
+          challengeId: challenge.id,
+          source: code,
+          language
+        })
       })
       const data = (await response.json()) as TestSummary & {
         error?: string

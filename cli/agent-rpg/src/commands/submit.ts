@@ -13,6 +13,7 @@ import type {
 import {
   scoreBoss,
   scoreStructuredAnswers,
+  type EvaluationLanguage,
   type ErrorHandlingSubmission,
   type ToolCall
 } from '@ai-agent-rpg/evaluator'
@@ -82,6 +83,7 @@ export interface SubmitOptions {
   errorHandling?: ErrorHandlingSubmission
   traces?: AgentTrace[]
   explanationAnswers?: string[]
+  language?: EvaluationLanguage
   hintUsages?: HintUsage[]
   explanation?: string
   submittedAt?: string
