@@ -4,7 +4,6 @@ import { join } from 'node:path'
 import type {
   AgentTrace,
   Attempt,
-  Challenge,
   EvaluationResult,
   Evidence,
   FailureCategory,
@@ -12,12 +11,9 @@ import type {
   Mission
 } from '@ai-agent-rpg/domain'
 import {
-  evaluateTestCases,
-  submissionFromTrace,
   type ErrorHandlingSubmission,
   type ToolCall
 } from '@ai-agent-rpg/evaluator'
-import { runAgentTracesInWorkspace } from '@ai-agent-rpg/runtime'
 import {
   calculateSkillLevel,
   FilePlayerStateStore,
@@ -31,6 +27,12 @@ import {
   loadGameContent,
   type GameContent
 } from './state'
+import {
+  evaluateChallenge,
+  resolveChallenge,
+  runChallenge,
+  type ResolvedChallenge
+} from './challenge-runner'
 
 export interface SubmitOptions {
   workspaceDir: string
@@ -57,84 +59,6 @@ export interface SubmitResult {
   unlockedChallengeId?: string
   unlockedMissionId?: string
   bossUnlocked: boolean
-}
-
-interface ResolvedChallenge {
-  challenge: Challenge
-  mission: Mission
-}
-
-function resolveChallenge(
-  content: GameContent,
-  state: PlayerState,
-  challengeId?: string
-): ResolvedChallenge {
-  if (challengeId) {
-    const challenge = content.challenges.find(
-      (item) => item.id === challengeId
-    )
-    const mission = content.missions.find(
-      (item) => item.id === challenge?.missionId
-    )
-    const challengeState = state.challenges.find(
-      (item) => item.id === challengeId
-    )
-
-    if (!challenge || !mission) {
-      throw new Error(`Unknown challenge: ${challengeId}`)
-    }
-    if (!challengeState) {
-      throw new Error(
-        `Challenge ${challengeId} is not part of the current player state.`
-      )
-    }
-    if (challengeState.status === 'locked') {
-      throw new Error(`Challenge ${challengeId} is locked.`)
-    }
-
-    return { challenge, mission }
-  }
-
-  const mission =
-    content.missions.find((item) => item.id === state.currentMissionId) ??
-    content.missions[0]
-
-  if (!mission) {
-    throw new Error('No missions are available to submit.')
-  }
-
-  const ordered = content.challengesByMission[mission.id] ?? []
-  const active = ordered
-    .map((challenge) => ({
-      challenge,
-      state: state.challenges.find((item) => item.id === challenge.id)
-    }))
-    .find(
-      (item) =>
-        item.state?.status === 'active' || item.state?.status === 'failed'
-    )
-
-  if (!active) {
-    throw new Error(
-      `No unlocked challenge to submit in ${mission.id}.`
-    )
-  }
-
-  return { challenge: active.challenge, mission }
-}
-
-function evaluateChallenge(
-  challenge: Challenge,
-  options: SubmitOptions,
-  traces?: AgentTrace[]
-): EvaluationResult {
-  return evaluateTestCases(challenge.tests, (_, index) =>
-    submissionFromTrace(traces?.[index], {
-      output: options.output,
-      toolCalls: options.toolCalls,
-      errorHandling: options.errorHandling
-    })
-  )
 }
 
 function upsertSkill(
@@ -404,29 +328,12 @@ export async function submitWorkspace(
   const store = new FilePlayerStateStore(workspaceDir)
   const state = await ensurePlayerState(store)
   const content = await loadGameContent()
-  const resolved = resolveChallenge(content, state, options.challengeId)
-  const needsRuntimeTrace = resolved.challenge.tests.some(
-    (test) =>
-      test.expectedBehavior.type === 'tool_called' ||
-      test.expectedBehavior.type === 'tool_not_called' ||
-      test.expectedBehavior.type === 'tool_sequence' ||
-      test.expectedBehavior.type === 'error_handled'
-  )
-  const shouldRunRuntime =
-    !options.traces && (!options.output || needsRuntimeTrace)
-  const traceExecution =
-    shouldRunRuntime
-      ? await runAgentTracesInWorkspace(
-          workspaceDir,
-          resolved.challenge.tests.map((test) => test.input)
-        )
-      : undefined
-  const traces = options.traces ?? traceExecution?.traces
-  const evaluation = evaluateChallenge(
-    resolved.challenge,
-    options,
-    traces
-  )
+  const run = await runChallenge({
+    ...options,
+    content,
+    state
+  })
+  const { resolved, evaluation, traces, traceExecution } = run
   let applied: AppliedSubmission | undefined
 
   await store.update((current) => {
@@ -461,9 +368,9 @@ export async function submitWorkspace(
   const sourceFiles = ['agent.py', 'tools.py', 'config.py']
   const sourceParts: string[] = []
   for (const file of sourceFiles) {
-    const content = await readOptionalFile(join(workspaceDir, file))
-    if (content) {
-      sourceParts.push(`# --- ${file} ---\n${content}`)
+    const fileContent = await readOptionalFile(join(workspaceDir, file))
+    if (fileContent) {
+      sourceParts.push(`# --- ${file} ---\n${fileContent}`)
     }
   }
 

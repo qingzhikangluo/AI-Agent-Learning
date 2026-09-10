@@ -6,7 +6,7 @@
 
 > Build the First Agent Vertical Slice。
 
-当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 Web UI 完成；EPIC 12 — 垂直切片闭合（P0 完成；P1 真实执行完成）**。
+当前进度：**EPIC 1 至 EPIC 10 完成；EPIC 11 Web UI 完成；EPIC 12 — 垂直切片闭合（P0/P1 完成；P2 进行中）**。
 
 ## Repository Structure
 
@@ -57,6 +57,12 @@ Web UI 在服务端读取 `packages/content` 与这份状态文件；未初始�
 
 ```bash
 agent-rpg submit --challenge <challenge-id> "<answer>"
+```
+
+测试当前 Challenge（只判定，不改状态）：
+
+```bash
+agent-rpg test --challenge <challenge-id>
 ```
 
 `submit` 会为每个测试用例执行一次玩家 `agent.py`。玩家代码实现

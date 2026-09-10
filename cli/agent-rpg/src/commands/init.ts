@@ -41,7 +41,7 @@ export async function initWorkspace(options: InitOptions): Promise<string> {
       'SYSTEM_PROMPT = "You are an internal employee assistant."\n',
     'README.md':
       '# Agent RPG Workspace\n\n' +
-      'Run tests with:\n\n```bash\nagent-rpg test\n```\n'
+      'Test the current challenge with:\n\n```bash\nagent-rpg test\n```\n'
   }
 
   for (const [name, content] of Object.entries(files)) {

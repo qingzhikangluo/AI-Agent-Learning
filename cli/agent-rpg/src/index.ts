@@ -25,10 +25,31 @@ async function main(): Promise<void> {
   }
 
   if (command === 'test') {
-    const result = await testWorkspace({ workspaceDir: process.cwd() })
-    process.stdout.write(result.stdout)
-    process.stderr.write(result.stderr)
-    process.exitCode = result.exitCode
+    const args = process.argv.slice(3)
+    const challengeFlagIndex = args.indexOf('--challenge')
+    const challengeId =
+      challengeFlagIndex >= 0 ? args[challengeFlagIndex + 1] : undefined
+    const result = await testWorkspace({
+      workspaceDir: process.cwd(),
+      challengeId
+    })
+    console.log(result.passed ? 'PASS' : 'FAIL')
+    console.log(`Challenge: ${result.challengeId} (${result.missionId})`)
+    console.log(`Score: ${Math.round(result.score * 100)}%`)
+    for (const test of result.publicResults) {
+      console.log(`${test.passed ? 'PASS' : 'FAIL'} ${test.name}`)
+    }
+    if (result.hiddenSummary.total > 0) {
+      console.log(
+        `Hidden tests: ${result.hiddenSummary.passed}/${result.hiddenSummary.total}`
+      )
+    }
+    if (result.failureCategories.length > 0) {
+      console.log(
+        `Failure categories: ${result.failureCategories.join(', ')}`
+      )
+    }
+    process.exitCode = result.passed ? 0 : 1
     return
   }
 
@@ -76,7 +97,7 @@ async function main(): Promise<void> {
   }
 
   console.log(
-    'Usage: agent-rpg <command>\n\nCommands:\n  init    Initialize a player workspace\n  run     Run the player agent\n  test    Run player tests\n  status  Show player status\n  submit  Submit the current (or --challenge <id>) challenge'
+    'Usage: agent-rpg <command>\n\nCommands:\n  init    Initialize a player workspace\n  run     Run the player agent\n  test    Test the current (or --challenge <id>) challenge\n  status  Show player status\n  submit  Submit the current (or --challenge <id>) challenge'
   )
 }
 
