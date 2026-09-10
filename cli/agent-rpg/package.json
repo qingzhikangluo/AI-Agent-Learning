@@ -7,6 +7,8 @@
     "agent-rpg": "./src/index.ts"
   },
   "dependencies": {
+    "@ai-agent-rpg/content": "0.1.0",
+    "@ai-agent-rpg/evaluator": "0.1.0",
     "@ai-agent-rpg/progression": "0.1.0",
     "@ai-agent-rpg/runtime": "0.1.0"
   }

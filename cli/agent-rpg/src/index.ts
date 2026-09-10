@@ -39,17 +39,44 @@ async function main(): Promise<void> {
   }
 
   if (command === 'submit') {
-    const explanation = process.argv[3] ?? 'Submitted via agent-rpg submit.'
+    const args = process.argv.slice(3)
+    const challengeFlagIndex = args.indexOf('--challenge')
+    const challengeId =
+      challengeFlagIndex >= 0 ? args[challengeFlagIndex + 1] : undefined
+    const answerParts = args.filter(
+      (_, index) =>
+        index !== challengeFlagIndex &&
+        (challengeFlagIndex < 0 || index !== challengeFlagIndex + 1)
+    )
+    const output = answerParts.join(' ').trim() || undefined
     const result = await submitWorkspace({
       workspaceDir: process.cwd(),
-      explanation
+      challengeId,
+      output,
+      explanation: output
     })
+    console.log(result.passed ? 'PASS' : 'FAIL')
+    console.log(`Challenge: ${result.challengeId} (${result.missionId})`)
+    console.log(`Score: ${Math.round(result.score * 100)}%`)
+    for (const line of result.feedback) {
+      console.log(`- ${line}`)
+    }
+    if (result.unlockedChallengeId) {
+      console.log(`Unlocked challenge: ${result.unlockedChallengeId}`)
+    }
+    if (result.unlockedMissionId) {
+      console.log(`Unlocked mission: ${result.unlockedMissionId}`)
+    }
+    if (result.bossUnlocked) {
+      console.log('Boss unlocked.')
+    }
+    console.log(`State: ${result.statePath}`)
     console.log(`Submission saved: ${result.submissionPath}`)
     return
   }
 
   console.log(
-    'Usage: agent-rpg <command>\n\nCommands:\n  init    Initialize a player workspace\n  run     Run the player agent\n  test    Run player tests\n  status  Show player status\n  submit  Submit the boss challenge'
+    'Usage: agent-rpg <command>\n\nCommands:\n  init    Initialize a player workspace\n  run     Run the player agent\n  test    Run player tests\n  status  Show player status\n  submit  Submit the current (or --challenge <id>) challenge'
   )
 }
 

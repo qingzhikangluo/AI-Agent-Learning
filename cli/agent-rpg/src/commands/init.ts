@@ -1,10 +1,9 @@
 import { mkdir, writeFile } from 'node:fs/promises'
 import { join, resolve } from 'node:path'
 
-import {
-  createEmptyPlayerState,
-  FilePlayerStateStore
-} from '@ai-agent-rpg/progression'
+import { FilePlayerStateStore } from '@ai-agent-rpg/progression'
+
+import { createSeededPlayerState } from './state'
 
 export interface InitOptions {
   workspaceDir: string
@@ -41,7 +40,7 @@ export async function initWorkspace(options: InitOptions): Promise<string> {
   const stateStore = new FilePlayerStateStore(workspaceDir)
   const existingState = await stateStore.read()
   if (!existingState) {
-    await stateStore.write(createEmptyPlayerState())
+    await stateStore.write(await createSeededPlayerState())
   }
 
   return workspaceDir

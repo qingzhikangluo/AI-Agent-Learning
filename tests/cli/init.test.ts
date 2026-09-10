@@ -25,6 +25,10 @@ describe('agent-rpg init', () => {
 
       const state = await new FilePlayerStateStore(workspaceDir).read()
       expect(state?.currentMissionId).toBe('mission-01')
+      expect(state?.missions).toHaveLength(4)
+      expect(state?.missions[0]?.status).toBe('active')
+      expect(state?.challenges.length).toBeGreaterThanOrEqual(11)
+      expect(state?.challenges[0]?.status).toBe('active')
       expect(state?.boss.status).toBe('locked')
       expect(state?.transfer.status).toBe('locked')
     } finally {
